@@ -2,6 +2,7 @@ import express from "express"
 import cors from "cors"
 import mysql from "mysql"
 import playerRoutes from "./routes/player.js"
+import adminRoutes from "./routes/admin.js"
 
 const app = express()
 
@@ -19,6 +20,7 @@ app.use(express.json())
 app.use(cors())
 
 app.use("/player", playerRoutes)
+app.use("/admin", adminRoutes)
 
 // Lets you know the backend is connected
 app.get("/", (req,res)=> {
