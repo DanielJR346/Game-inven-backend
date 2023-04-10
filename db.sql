@@ -265,7 +265,6 @@ DROP TABLE IF EXISTS `player`;
 CREATE TABLE `player` (
   `UserID` int NOT NULL,
   `Money` int NOT NULL DEFAULT '0',
-  `Name` varchar(45) NOT NULL,
   `CarryWeight` int NOT NULL DEFAULT '0',
   `Invcapacity` int NOT NULL DEFAULT '0',
   PRIMARY KEY (`UserID`),
@@ -279,7 +278,7 @@ CREATE TABLE `player` (
 
 LOCK TABLES `player` WRITE;
 /*!40000 ALTER TABLE `player` DISABLE KEYS */;
-INSERT INTO `player` VALUES (1,100,'TestPlayer',300,200),(2,100,'TestPlayer2',300,200),(3,100,'TestPlayer2',300,200);
+INSERT INTO `player` VALUES (1,100,300,200),(2,100,300,200),(3,100,300,200);
 /*!40000 ALTER TABLE `player` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -370,6 +369,7 @@ DROP TABLE IF EXISTS `user`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `user` (
   `UserID` int NOT NULL AUTO_INCREMENT,
+  `Username` varchar(45) NOT NULL,
   PRIMARY KEY (`UserID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -380,7 +380,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (1),(2),(3),(4);
+INSERT INTO `user` VALUES (1,''),(2,''),(3,''),(4,'');
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -522,4 +522,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-04-09 15:04:49
+-- Dump completed on 2023-04-10 16:02:18
