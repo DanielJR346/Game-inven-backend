@@ -1,131 +1,29 @@
 import express from "express"
 import cors from "cors"
 import mysql from "mysql"
+import playerRoutes from "./routes/player.js"
 
 const app = express()
 
-const db = mysql.createConnection({
-    host:"localhost",
-    user:"root",
-    password:"Atasacir9689842!",
-    database:"db"
-    // used https://stackoverflow.com/questions/51147964/errno-1251-sqlmessage-client-does-not-support-authentication-protocol-reques
-    // for authentication problems
-    // ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'your_mysql_password';
-})
+// const db = mysql.createConnection({
+//     host:"localhost",
+//     user:"root",
+//     password:"Atasacir9689842!",
+//     database:"db"
+//     // used https://stackoverflow.com/questions/51147964/errno-1251-sqlmessage-client-does-not-support-authentication-protocol-reques
+//     // for authentication problems
+//     // ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'your_mysql_password';
+// })
 
 app.use(express.json())
 app.use(cors())
 
+app.use("/player", playerRoutes)
+
+// Lets you know the backend is connected
 app.get("/", (req,res)=> {
     res.json("hello this is the backend!")
 })
-
-
-////////////////////////////////////////////////////////////////////////
-// Player Get Requests
-////////////////////////////////////////////////////////////////////////
-
-/*
-Get all items in the inventory of the player with the inputted PlayerID
-*/
-app.get("/allItems/:id", (req,res)=> {
-    const PlayerID = req.params.id;
-    const q = "SELECT * FROM item WHERE PlayerStoredID = (?)";
-    db.query(q,[PlayerID],(err,data)=> {
-        if(err) return res.json(err)
-        return res.json(data)
-    })
-})
-
-/*
-Get all EQUIPPABLE items in players inventory
-*/
-app.get("/getEquippables/:id", (req,res)=>{
-    const PlayerID = req.params.id;
-    const q = "SELECT * FROM db.item i INNER JOIN db.equippable e ON i.ItemID = e.ItemID  WHERE i.PlayerStoredID = (?)"
-    db.query(q,[PlayerID],(err,data)=> {
-        if(err) return res.json(err)
-        return res.json(data)
-    })
-})
-
-/*
-Get all items EQUIPPED by a player
-NOTE: Query doesn't check if the item is actually in the players inventory
-    This shouldn't matter since it shouldn't happen
-*/
-app.get("/getEquippedItems/:id", (req,res)=>{
-    const PlayerID = req.params.id;
-    const q = "SELECT * FROM db.armour a INNER JOIN db.Equippable e ON a.ItemID = e.ItemID INNER JOIN db.item i ON e.ItemID = i.ItemID WHERE a.EquippedID = (?)"
-    db.query(q,[PlayerID],(err,data)=> {
-        if(err) return res.json(err)
-        return res.json(data)
-    })
-})
-
-/*
-Get all consumables in a player inventory
-*/
-app.get("/getConsumables/:id", (req,res)=>{
-    const PlayerID = req.params.id;
-    const q = "SELECT * FROM db.consumable c INNER JOIN db.item i ON c.ItemID = i.ItemID WHERE i.PlayerStoredID = (?)"
-    db.query(q,[PlayerID],(err,data)=> {
-        if(err) return res.json(err)
-        return res.json(data)
-    })
-})
-
-/*
-Get player name
-*/
-app.get("/getPlayerName/:id", (req,res)=>{
-    const PlayerID = req.params.id;
-    const q = "SELECT u.Name FROM db.user u INNER JOIN db.player p ON u.UserID = p.UserID WHERE p.UserID = (?)"
-    db.query(q,[PlayerID],(err,data)=> {
-        if(err) return res.json(err)
-        return res.json(data)
-    })
-})
-
-/*
-Get Player Info:
-    money
-    inventory space
-    carry weight
-NOTE: Still need to account for nonexistant UserIDs, should return "user does not exist!" to notify frontend
-*/
-app.get("/getPlayerInfo/:id", (req,res)=>{
-    const PlayerID = req.params.id;
-    const q = "SELECT * FROM db.player WHERE db.player.UserID = (?)"
-    db.query(q,[PlayerID],(err,data)=> {
-        if(err) return res.json(err)
-        return res.json(data)
-    })
-})
-
-
-////////////////////////////////////////////////////////////////////////
-// Player Post/Put Requests
-////////////////////////////////////////////////////////////////////////
-
-/*
-Player wants to equip a piece of armor
-NOTE: NOT FINISHED!!!! doesnt check if player is already equipping an armor piece of that type
-*/
-app.put("/equipArmour/:id", (req,res)=>{
-    const PlayerID = req.params.id;
-    const q ="UPDATE armour SET `EquippedID` = ? WHERE `ItemID` = ?";
-    const values = [
-        req.body.ItemID
-    ];
-    db.query(q, [...PlayerID, values], (err,data)=>{
-        if(err) return res.json(err)
-        console.log("Armor Equipped!")
-        return res.json("Armor Equipped!")
-    })
-})
-
 
 /*
 Player buys an item from a vendor
