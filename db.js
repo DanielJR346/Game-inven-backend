@@ -3,7 +3,7 @@ import mysql from "mysql"
 export const db = mysql.createConnection({
     host:"localhost",
     user:"root",
-    password:"Atasacir9689842!",
+    password:"123Iamcool123",
     database:"db"
     // used https://stackoverflow.com/questions/51147964/errno-1251-sqlmessage-client-does-not-support-authentication-protocol-reques
     // for authentication problems
