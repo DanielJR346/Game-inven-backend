@@ -124,7 +124,7 @@ CREATE TABLE `armour` (
 
 LOCK TABLES `armour` WRITE;
 /*!40000 ALTER TABLE `armour` DISABLE KEYS */;
-INSERT INTO `armour` VALUES (1,123,'1',1),(2,327,'2',1);
+INSERT INTO `armour` VALUES (1,123,'1',1),(2,124,'2',1);
 /*!40000 ALTER TABLE `armour` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -154,7 +154,7 @@ CREATE TABLE `consumable` (
 
 LOCK TABLES `consumable` WRITE;
 /*!40000 ALTER TABLE `consumable` DISABLE KEYS */;
-INSERT INTO `consumable` VALUES (3,'assda',3,1,NULL);
+INSERT INTO `consumable` VALUES (3,'assda',0,1,NULL);
 /*!40000 ALTER TABLE `consumable` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -207,7 +207,7 @@ CREATE TABLE `item` (
 
 LOCK TABLES `item` WRITE;
 /*!40000 ALTER TABLE `item` DISABLE KEYS */;
-INSERT INTO `item` VALUES (1,'test melee weapon',3,0),(2,'test melee weapon',1,50),(3,'test melee weapon',1,0),(4,'test melee weapon',1,0),(5,'test melee weapon',1,0),(6,'test melee weapon',1,0),(7,'test melee weapon final',2,0),(8,'test melee weapon final again',2,0),(9,'test melee weapon final again',2,0),(10,'test melee weapon final again with NULL playerWieldID',2,0),(11,'test melee weapon final again with without inputting PlayerWieldID and ItemID',2,0),(12,'test melee weapon final again with without inputting PlayerWieldID and ItemID',2,0),(13,'test melee weapon final again with without inputting PlayerWieldID and ItemID',2,0),(14,'test melee weapon final again with without inputting PlayerWieldID and ItemID',2,0),(15,'test melee weapon final again with without inputting PlayerWieldID and ItemID',2,0),(16,'test melee weapon final again with without inputting PlayerWieldID and ItemID',2,0),(17,'test melee weapon final again with without inputting PlayerWieldID and ItemID',2,0),(18,'test melee weapon final again with without inputting PlayerWieldID and ItemID',2,0),(19,'test melee weapon final again with without inputting PlayerWieldID and ItemID',2,0),(20,'ples work',NULL,0),(23,'testing test2 function',1,0),(24,'testing test2 function',1,0),(100,'testing if I can return the itemID',NULL,0),(101,'testing if I can return the itemID',NULL,0),(102,'testing if I can return the itemID',NULL,0),(103,'testing if I can return the itemID',NULL,0),(104,'testing if I can return the itemID',NULL,0),(105,'testing if I can return the itemID',NULL,0),(106,'testing if I can return the itemID',NULL,0),(107,'testing if I can return the itemID',NULL,0),(108,'testing if I can return the itemID',NULL,0),(109,'testing if I can return the itemID',NULL,0),(110,'testing if I can return the itemID',NULL,0),(111,'testing if this shows up on the table',NULL,0),(112,'testing if this shows up on the table',NULL,0),(113,'testing if I can return the itemID',NULL,0),(114,'testing if I can return the itemID',NULL,0),(115,'testing if I can return the itemID',NULL,0),(116,'testing if I can return the itemID',NULL,0),(117,'testing if I can return the itemID',NULL,0),(118,'testing if I can return the itemID, is this item showing up?',NULL,0),(119,'testing if I can return the itemID, is this item showing up?',NULL,0),(120,'testing if I can return the itemID, is this item showing up?',NULL,0),(121,'test melee weapon again',NULL,0),(122,'test melee weapon again',NULL,0),(123,'test melee weapon again',NULL,0),(124,'test melee weapon again',NULL,0),(125,'test melee weapon again',NULL,0),(126,'test melee weapon again',NULL,0),(127,'test melee weapon again',NULL,0),(128,'test melee weapon again',NULL,0),(129,'test melee weapon again',NULL,0),(130,'test melee weapon again',NULL,0),(131,'test melee weapon again',NULL,0),(132,'test melee weapon again',NULL,0),(133,'ples work',NULL,0),(134,'testing test2 function',NULL,0);
+INSERT INTO `item` VALUES (1,'test melee weapon',3,0),(2,'test melee weapon',1,50),(3,'test melee weapon',NULL,0),(4,'test melee weapon',1,0),(5,'test melee weapon',1,0),(6,'testing changeAttributes admin command',1,6969),(7,'test melee weapon final',2,0),(8,'test melee weapon final again',2,0),(9,'test melee weapon final again',2,0),(10,'test melee weapon final again with NULL playerWieldID',2,0),(11,'test melee weapon final again with without inputting PlayerWieldID and ItemID',2,0),(12,'test melee weapon final again with without inputting PlayerWieldID and ItemID',2,0),(13,'test melee weapon final again with without inputting PlayerWieldID and ItemID',2,0),(14,'test melee weapon final again with without inputting PlayerWieldID and ItemID',2,0),(15,'test melee weapon final again with without inputting PlayerWieldID and ItemID',2,0),(16,'test melee weapon final again with without inputting PlayerWieldID and ItemID',2,0),(17,'test melee weapon final again with without inputting PlayerWieldID and ItemID',2,0),(18,'test melee weapon final again with without inputting PlayerWieldID and ItemID',2,0),(19,'test melee weapon final again with without inputting PlayerWieldID and ItemID',2,0),(20,'ples work',NULL,0),(23,'testing test2 function',1,0),(24,'testing test2 function',1,0),(100,'testing if I can return the itemID',NULL,0),(101,'testing if I can return the itemID',NULL,0),(102,'testing if I can return the itemID',NULL,0),(103,'testing if I can return the itemID',NULL,0),(104,'testing if I can return the itemID',NULL,0),(105,'testing if I can return the itemID',NULL,0),(106,'testing if I can return the itemID',NULL,0),(107,'testing if I can return the itemID',NULL,0),(108,'testing if I can return the itemID',NULL,0),(109,'testing if I can return the itemID',NULL,0),(110,'testing if I can return the itemID',NULL,0),(111,'testing if this shows up on the table',NULL,0),(112,'testing if this shows up on the table',NULL,0),(113,'testing if I can return the itemID',NULL,0),(114,'testing if I can return the itemID',NULL,0),(115,'testing if I can return the itemID',NULL,0),(116,'testing if I can return the itemID',NULL,0),(117,'testing if I can return the itemID',NULL,0),(118,'testing if I can return the itemID, is this item showing up?',NULL,0),(119,'testing if I can return the itemID, is this item showing up?',NULL,0),(120,'testing if I can return the itemID, is this item showing up?',NULL,0),(121,'test melee weapon again',NULL,0),(122,'test melee weapon again',NULL,0),(123,'test melee weapon again',NULL,0),(124,'test melee weapon again',NULL,0),(125,'test melee weapon again',NULL,0),(126,'test melee weapon again',NULL,0),(127,'test melee weapon again',NULL,0),(128,'test melee weapon again',NULL,0),(129,'test melee weapon again',NULL,0),(130,'test melee weapon again',NULL,0),(131,'test melee weapon again',NULL,0),(132,'test melee weapon again',NULL,0),(133,'ples work',NULL,0),(134,'testing test2 function',NULL,0);
 /*!40000 ALTER TABLE `item` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -312,6 +312,33 @@ LOCK TABLES `player_buys_item` WRITE;
 /*!40000 ALTER TABLE `player_buys_item` DISABLE KEYS */;
 INSERT INTO `player_buys_item` VALUES (1,1),(1,2),(2,2);
 /*!40000 ALTER TABLE `player_buys_item` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `player_consumes_consumable`
+--
+
+DROP TABLE IF EXISTS `player_consumes_consumable`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `player_consumes_consumable` (
+  `ConsumableID` int DEFAULT NULL,
+  `PlayerConsumedID` int DEFAULT NULL,
+  KEY `ConsumableID_idx` (`ConsumableID`),
+  KEY `ConsumerID_idx` (`PlayerConsumedID`),
+  CONSTRAINT `ConsumableID` FOREIGN KEY (`ConsumableID`) REFERENCES `consumable` (`ItemID`),
+  CONSTRAINT `ConsumerID` FOREIGN KEY (`PlayerConsumedID`) REFERENCES `player` (`UserID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='records which potions a player consumes';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `player_consumes_consumable`
+--
+
+LOCK TABLES `player_consumes_consumable` WRITE;
+/*!40000 ALTER TABLE `player_consumes_consumable` DISABLE KEYS */;
+INSERT INTO `player_consumes_consumable` VALUES (1,1),(3,1),(3,1);
+/*!40000 ALTER TABLE `player_consumes_consumable` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -466,7 +493,7 @@ CREATE TABLE `vendor_sells_item` (
 
 LOCK TABLES `vendor_sells_item` WRITE;
 /*!40000 ALTER TABLE `vendor_sells_item` DISABLE KEYS */;
-INSERT INTO `vendor_sells_item` VALUES (1,1,248),(1,5,110);
+INSERT INTO `vendor_sells_item` VALUES (1,1,248),(1,5,123),(1,6,169);
 /*!40000 ALTER TABLE `vendor_sells_item` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -535,4 +562,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-04-11  0:21:20
+-- Dump completed on 2023-04-11  1:37:24
