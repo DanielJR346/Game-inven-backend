@@ -7,6 +7,7 @@ import {
     getPlayerName,
     getPlayerInfo,
     equipArmour,
+    playerConsumes,
     buyItem,
     sellItem,
     changePassword,
@@ -23,6 +24,7 @@ router.get("/getPlayerName/:id", getPlayerName)
 router.get("/getPlayerInfo/:id", getPlayerInfo)
 
 router.put("/equipArmour/:id", equipArmour)
+router.put("/playerConsumes", playerConsumes)
 router.put("/buyItem/:id", buyItem)
 router.put("/sellItem/:id", sellItem)
 router.put("/changePassword/:id", changePassword)
