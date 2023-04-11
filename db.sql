@@ -2,7 +2,7 @@ CREATE DATABASE  IF NOT EXISTS `db` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLA
 USE `db`;
 -- MySQL dump 10.13  Distrib 8.0.32, for Win64 (x86_64)
 --
--- Host: 127.0.0.1    Database: db
+-- Host: localhost    Database: db
 -- ------------------------------------------------------
 -- Server version	8.0.32
 
@@ -40,6 +40,7 @@ CREATE TABLE `admin` (
 
 LOCK TABLES `admin` WRITE;
 /*!40000 ALTER TABLE `admin` DISABLE KEYS */;
+INSERT INTO `admin` VALUES (1,1);
 /*!40000 ALTER TABLE `admin` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -123,6 +124,7 @@ CREATE TABLE `armour` (
 
 LOCK TABLES `armour` WRITE;
 /*!40000 ALTER TABLE `armour` DISABLE KEYS */;
+INSERT INTO `armour` VALUES (1,123,'1',1),(2,327,'2',1);
 /*!40000 ALTER TABLE `armour` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -152,6 +154,7 @@ CREATE TABLE `consumable` (
 
 LOCK TABLES `consumable` WRITE;
 /*!40000 ALTER TABLE `consumable` DISABLE KEYS */;
+INSERT INTO `consumable` VALUES (3,'assda',3,1,NULL);
 /*!40000 ALTER TABLE `consumable` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -176,6 +179,7 @@ CREATE TABLE `equippable` (
 
 LOCK TABLES `equippable` WRITE;
 /*!40000 ALTER TABLE `equippable` DISABLE KEYS */;
+INSERT INTO `equippable` VALUES (1,123),(2,123);
 /*!40000 ALTER TABLE `equippable` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -190,10 +194,11 @@ CREATE TABLE `item` (
   `ItemID` int NOT NULL AUTO_INCREMENT,
   `Description` varchar(255) DEFAULT NULL,
   `PlayerStoredID` int DEFAULT NULL,
+  `PlayerSellPrice` int DEFAULT '0',
   PRIMARY KEY (`ItemID`),
   KEY `PlayerOwned_idx` (`PlayerStoredID`),
   CONSTRAINT `PlayerOwned` FOREIGN KEY (`PlayerStoredID`) REFERENCES `player` (`UserID`)
-) ENGINE=InnoDB AUTO_INCREMENT=133 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=135 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='PlayerSellPrice is the price the player can sell the item for. NOT the price to buy the item! that price is in vendor_sells_item';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -202,7 +207,7 @@ CREATE TABLE `item` (
 
 LOCK TABLES `item` WRITE;
 /*!40000 ALTER TABLE `item` DISABLE KEYS */;
-INSERT INTO `item` VALUES (1,'test melee weapon',1),(2,'test melee weapon',1),(3,'test melee weapon',1),(4,'test melee weapon',1),(5,'test melee weapon',1),(6,'test melee weapon',1),(7,'test melee weapon final',2),(8,'test melee weapon final again',2),(9,'test melee weapon final again',2),(10,'test melee weapon final again with NULL playerWieldID',2),(11,'test melee weapon final again with without inputting PlayerWieldID and ItemID',2),(12,'test melee weapon final again with without inputting PlayerWieldID and ItemID',2),(13,'test melee weapon final again with without inputting PlayerWieldID and ItemID',2),(14,'test melee weapon final again with without inputting PlayerWieldID and ItemID',2),(15,'test melee weapon final again with without inputting PlayerWieldID and ItemID',2),(16,'test melee weapon final again with without inputting PlayerWieldID and ItemID',2),(17,'test melee weapon final again with without inputting PlayerWieldID and ItemID',2),(18,'test melee weapon final again with without inputting PlayerWieldID and ItemID',2),(19,'test melee weapon final again with without inputting PlayerWieldID and ItemID',2),(100,'testing if I can return the itemID',NULL),(101,'testing if I can return the itemID',NULL),(102,'testing if I can return the itemID',NULL),(103,'testing if I can return the itemID',NULL),(104,'testing if I can return the itemID',NULL),(105,'testing if I can return the itemID',NULL),(106,'testing if I can return the itemID',NULL),(107,'testing if I can return the itemID',NULL),(108,'testing if I can return the itemID',NULL),(109,'testing if I can return the itemID',NULL),(110,'testing if I can return the itemID',NULL),(111,'testing if this shows up on the table',NULL),(112,'testing if this shows up on the table',NULL),(113,'testing if I can return the itemID',NULL),(114,'testing if I can return the itemID',NULL),(115,'testing if I can return the itemID',NULL),(116,'testing if I can return the itemID',NULL),(117,'testing if I can return the itemID',NULL),(118,'testing if I can return the itemID, is this item showing up?',NULL),(119,'testing if I can return the itemID, is this item showing up?',NULL),(120,'testing if I can return the itemID, is this item showing up?',NULL),(121,'test melee weapon again',NULL),(122,'test melee weapon again',NULL),(123,'test melee weapon again',NULL),(124,'test melee weapon again',NULL),(125,'test melee weapon again',NULL),(126,'test melee weapon again',NULL),(127,'test melee weapon again',NULL),(128,'test melee weapon again',NULL),(129,'test melee weapon again',NULL),(130,'test melee weapon again',NULL),(131,'test melee weapon again',NULL),(132,'test melee weapon again',NULL);
+INSERT INTO `item` VALUES (1,'test melee weapon',3,0),(2,'test melee weapon',1,50),(3,'test melee weapon',1,0),(4,'test melee weapon',1,0),(5,'test melee weapon',1,0),(6,'test melee weapon',1,0),(7,'test melee weapon final',2,0),(8,'test melee weapon final again',2,0),(9,'test melee weapon final again',2,0),(10,'test melee weapon final again with NULL playerWieldID',2,0),(11,'test melee weapon final again with without inputting PlayerWieldID and ItemID',2,0),(12,'test melee weapon final again with without inputting PlayerWieldID and ItemID',2,0),(13,'test melee weapon final again with without inputting PlayerWieldID and ItemID',2,0),(14,'test melee weapon final again with without inputting PlayerWieldID and ItemID',2,0),(15,'test melee weapon final again with without inputting PlayerWieldID and ItemID',2,0),(16,'test melee weapon final again with without inputting PlayerWieldID and ItemID',2,0),(17,'test melee weapon final again with without inputting PlayerWieldID and ItemID',2,0),(18,'test melee weapon final again with without inputting PlayerWieldID and ItemID',2,0),(19,'test melee weapon final again with without inputting PlayerWieldID and ItemID',2,0),(20,'ples work',NULL,0),(23,'testing test2 function',1,0),(24,'testing test2 function',1,0),(100,'testing if I can return the itemID',NULL,0),(101,'testing if I can return the itemID',NULL,0),(102,'testing if I can return the itemID',NULL,0),(103,'testing if I can return the itemID',NULL,0),(104,'testing if I can return the itemID',NULL,0),(105,'testing if I can return the itemID',NULL,0),(106,'testing if I can return the itemID',NULL,0),(107,'testing if I can return the itemID',NULL,0),(108,'testing if I can return the itemID',NULL,0),(109,'testing if I can return the itemID',NULL,0),(110,'testing if I can return the itemID',NULL,0),(111,'testing if this shows up on the table',NULL,0),(112,'testing if this shows up on the table',NULL,0),(113,'testing if I can return the itemID',NULL,0),(114,'testing if I can return the itemID',NULL,0),(115,'testing if I can return the itemID',NULL,0),(116,'testing if I can return the itemID',NULL,0),(117,'testing if I can return the itemID',NULL,0),(118,'testing if I can return the itemID, is this item showing up?',NULL,0),(119,'testing if I can return the itemID, is this item showing up?',NULL,0),(120,'testing if I can return the itemID, is this item showing up?',NULL,0),(121,'test melee weapon again',NULL,0),(122,'test melee weapon again',NULL,0),(123,'test melee weapon again',NULL,0),(124,'test melee weapon again',NULL,0),(125,'test melee weapon again',NULL,0),(126,'test melee weapon again',NULL,0),(127,'test melee weapon again',NULL,0),(128,'test melee weapon again',NULL,0),(129,'test melee weapon again',NULL,0),(130,'test melee weapon again',NULL,0),(131,'test melee weapon again',NULL,0),(132,'test melee weapon again',NULL,0),(133,'ples work',NULL,0),(134,'testing test2 function',NULL,0);
 /*!40000 ALTER TABLE `item` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -278,7 +283,7 @@ CREATE TABLE `player` (
 
 LOCK TABLES `player` WRITE;
 /*!40000 ALTER TABLE `player` DISABLE KEYS */;
-INSERT INTO `player` VALUES (1,100,300,200),(2,100,300,200),(3,100,300,200);
+INSERT INTO `player` VALUES (1,1245,300,200),(2,200,300,200),(3,100,300,200);
 /*!40000 ALTER TABLE `player` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -305,6 +310,7 @@ CREATE TABLE `player_buys_item` (
 
 LOCK TABLES `player_buys_item` WRITE;
 /*!40000 ALTER TABLE `player_buys_item` DISABLE KEYS */;
+INSERT INTO `player_buys_item` VALUES (1,1),(1,2),(2,2);
 /*!40000 ALTER TABLE `player_buys_item` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -369,9 +375,10 @@ DROP TABLE IF EXISTS `user`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `user` (
   `UserID` int NOT NULL AUTO_INCREMENT,
-  `Username` varchar(45) NOT NULL,
+  `Password` varchar(255) NOT NULL DEFAULT 'password',
+  `Username` varchar(45) NOT NULL DEFAULT 'User',
   PRIMARY KEY (`UserID`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='all users deafult passwords is ''password''';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -380,7 +387,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (1,''),(2,''),(3,''),(4,'');
+INSERT INTO `user` VALUES (1,'newPassword','testname'),(2,'password','User'),(3,'password','User'),(4,'newPasswordButForUser4','User');
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -395,7 +402,7 @@ CREATE TABLE `vendor` (
   `VendorID` int NOT NULL AUTO_INCREMENT,
   `Money` int NOT NULL DEFAULT '0',
   PRIMARY KEY (`VendorID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -404,6 +411,7 @@ CREATE TABLE `vendor` (
 
 LOCK TABLES `vendor` WRITE;
 /*!40000 ALTER TABLE `vendor` DISABLE KEYS */;
+INSERT INTO `vendor` VALUES (1,755);
 /*!40000 ALTER TABLE `vendor` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -417,7 +425,6 @@ DROP TABLE IF EXISTS `vendor_buys_item`;
 CREATE TABLE `vendor_buys_item` (
   `VendorID` int NOT NULL,
   `ItemID` int NOT NULL,
-  `Price` int NOT NULL DEFAULT '0',
   PRIMARY KEY (`VendorID`,`ItemID`),
   KEY `ItemSold_id` (`ItemID`) /*!80000 INVISIBLE */,
   CONSTRAINT `ItemBought` FOREIGN KEY (`ItemID`) REFERENCES `item` (`ItemID`),
@@ -431,6 +438,7 @@ CREATE TABLE `vendor_buys_item` (
 
 LOCK TABLES `vendor_buys_item` WRITE;
 /*!40000 ALTER TABLE `vendor_buys_item` DISABLE KEYS */;
+INSERT INTO `vendor_buys_item` VALUES (1,2);
 /*!40000 ALTER TABLE `vendor_buys_item` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -458,6 +466,7 @@ CREATE TABLE `vendor_sells_item` (
 
 LOCK TABLES `vendor_sells_item` WRITE;
 /*!40000 ALTER TABLE `vendor_sells_item` DISABLE KEYS */;
+INSERT INTO `vendor_sells_item` VALUES (1,1,248),(1,5,110);
 /*!40000 ALTER TABLE `vendor_sells_item` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -512,6 +521,10 @@ LOCK TABLES `weapon_effects` WRITE;
 /*!40000 ALTER TABLE `weapon_effects` DISABLE KEYS */;
 /*!40000 ALTER TABLE `weapon_effects` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Dumping routines for database 'db'
+--
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -522,4 +535,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-04-10 16:02:18
+-- Dump completed on 2023-04-11  0:21:20
