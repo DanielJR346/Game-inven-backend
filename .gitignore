@@ -4,6 +4,7 @@
 /node_modules
 /Api/node_modules
 /.pnp
+.db.js
 .pnp.js
 
 # testing

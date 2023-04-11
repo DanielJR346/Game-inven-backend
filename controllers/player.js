@@ -99,6 +99,42 @@ export const equipArmour = (req,res) => {
 }
 
 /*
+Player consumes a consumable (lowers the quantity of consumables by 1)
+Removes any consumables with 0 quantity (doesnt erase items, simply removes any ownership of the item)
+Does not utilize #ofUses
+INPUT:
+    req.body:
+        PlayerID
+        ConsumableID
+*/
+export const playerConsumes = (req,res) => {
+    // Player first consumes the potion
+    const consume = "INSERT INTO db.player_consumes_consumable (`ConsumableID`, `PlayerConsumedID`) VALUES (?)"
+    const values = [req.body.ConsumableID, req.body.PlayerID]
+    db.query(consume, [values], (err,data)=>{
+        if(err) return res.json(err)
+        console.log("consumable consumed")
+        // return res.json("consumable consumed!")
+    })
+
+    // Decrement the quantity of that potion
+    const decrementQuant = "UPDATE db.consumable c SET c.Quantity = c.Quantity -1 WHERE c.ItemID = ?"
+    db.query(decrementQuant, [req.body.ConsumableID], (err,data)=>{
+        if(err) return res.json(err)
+        console.log("quantity decreased")
+        // return res.json("quantity decremented!")
+    })
+
+    // Remove any potions from players inventory that have 0 quantity left
+    const checkQuant = "UPDATE db.item i INNER JOIN db.consumable c ON i.ItemID = c.ItemID SET i.PlayerStoredID = NULL WHERE c.Quantity = 0"
+    db.query(checkQuant, (err,data)=>{
+        if(err) return res.json(err)
+        console.log("removed empty consumables!")
+        return res.json("removed empty consumables!")
+    })
+}
+
+/*
 Player buys an item
 INPUT:
     req.params:
@@ -314,7 +350,7 @@ export const login = (req,res) => {
     // })
 
     // Check if the inputted password is correct
-    const passCheck = "SELECT * FROM user WHERE user.Name = ? AND user.Password = ?"
+    const passCheck = "SELECT * FROM user WHERE user.Username = ? AND user.Password = ?"
     db.query(passCheck, [req.body.Username, req.body.Password], (err,data)=>{
         if(err) return res.json(err)
         if(data.length == 0) return res.status(404).json("Password is incorrect or user does not exist!")

@@ -6,7 +6,13 @@ import {
     createMeleeWeapon,
     createRangedWeapon,
     getAdminInfo,
-    getVendorOffers
+    getVendorOffers,
+    removeOffer,
+    removePlayerItem,
+    addItem,
+    addOffer,
+    changeAttributes,
+    login
 } from "../controllers/admin.js"
 
 const router = express.Router()
@@ -18,5 +24,11 @@ router.post("/createMagicWeapon/", createMagicWeapon)
 router.post("/createItem/", createItem)
 router.get("/allItems/", allItems)
 router.get("/getVendorOffers", getVendorOffers)
+router.put("/removeOffer", removeOffer)
+router.put("/removePlayerItem", removePlayerItem)
+router.put("/addItem", addItem)
+router.put("/addOffer", addOffer)
+router.put("/changeAttributes", changeAttributes)
+router.put("/login", login)
 
 export default router
