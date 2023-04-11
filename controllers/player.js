@@ -57,8 +57,8 @@ Get player name (also in getPlayerInfo)
 */
 export const getPlayerName = (req,res) => {
     const PlayerID = req.params.id;
-    const q = "SELECT u.Name FROM db.user u INNER JOIN db.player p ON u.UserID = p.UserID WHERE p.UserID = (?)"
-    // const q = "SELECT u.Name FROM db.player u WHERE u.UserID = (?)"
+    const q = "SELECT u.Username FROM db.user u INNER JOIN db.player p ON u.UserID = p.UserID WHERE p.UserID = (?)"
+    // const q = "SELECT u.Username FROM db.player u WHERE u.UserID = (?)"
     db.query(q,[PlayerID],(err,data)=> {
         if(err) return res.json(err)
         return res.json(data)
@@ -315,7 +315,7 @@ export const login = (req,res) => {
 
     // Check if the inputted password is correct
     const passCheck = "SELECT * FROM user WHERE user.Name = ? AND user.Password = ?"
-    db.query(passCheck, [req.body.Name, req.body.Password], (err,data)=>{
+    db.query(passCheck, [req.body.Username, req.body.Password], (err,data)=>{
         if(err) return res.json(err)
         if(data.length == 0) return res.status(404).json("Password is incorrect or user does not exist!")
         return res.json("User authenticated!")
