@@ -347,6 +347,9 @@ export const changeItemWeapon = (req, res) => {
     })
 }
 
+/*
+ Changes Magic Weapon Attributes 
+ */ 
 export const changeMagic = (req, res) => {
 
     const chMagic = "INSERT INTO db.magic_weapon (`WeaponID`, `ManaCost`) VALUES (?)"
@@ -360,7 +363,42 @@ export const changeMagic = (req, res) => {
         console.log("magic weapon added")
         return res.json("magic weapon added")
     })
+}
 
+/*
+ Changes Ranged Weapon Attributes 
+ */ 
+export const changeRanged = (req, res) => {
+
+    const chRanged = "INSERT INTO db.ranged_weapon (`WeaponID`, `DrawSpeed`) VALUES (?)"
+    const values = [
+        req.body.WeaponID,
+        req.body.DrawSpeed
+    ]
+
+    db.query(chRanged, [values], (err, data) => {
+        if (err) return res.json(err)
+        console.log("ranged weapon added")
+        return res.json("ranged weapon added")
+    })
+}
+
+/*
+ Changes Melee Weapon Attributes 
+ */ 
+export const changeMelee = (req, res) => {
+
+    const chMelee = "INSERT INTO db.melee_weapon (`WeaponID`, `AttackSpeed`) VALUES (?)"
+    const values = [
+        req.body.WeaponID,
+        req.body.AttackSpeed
+    ]
+
+    db.query(chMelee, [values], (err, data) => {
+        if (err) return res.json(err)
+        console.log("melee weapon added")
+        return res.json("melee weapon added")
+    })
 }
 
 /*
