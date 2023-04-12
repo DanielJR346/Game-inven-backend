@@ -298,7 +298,7 @@ Input:
 */
 export const changeAttributes = (req,res) => {
     const changeAttr = "UPDATE db.item i SET i.Description = ?, i.PlayerSellPrice = ? WHERE i.ItemID = ?"
-    db.query(changeAttr, [req.body.Description, req.body.PlayerSellPrice, req.body.ItemID], (err, data) => {
+    db.query(changeAttr, [req.body.Description,  req.body.PlayerSellPrice, req.body.ItemID], (err, data) => {
         if (err) return res.json(err)
         console.log("offer added to vendor!")
         return res.json("offer added to vendor!")
@@ -307,7 +307,42 @@ export const changeAttributes = (req,res) => {
 
 export const changeItemWeapon = (req, res) => {
 
-    const 
+    // Deletes item from all weapon/item tables
+    // Cascades through all tables
+    const ItemID = req.body.ItemID
+    const delItem = "DELETE FROM db.item i WHERE i.ItemID = ?"
+    db.query(delItem, ItemID, (err, data) => {
+    if (err) return res.json(err)
+        console.log("item deleted")
+        //return res.json("item deleted")
+    })
+
+    // Adds item with the correct ItemID
+    const addItem = "INSERT INTO db.item (`ItemID`, `Description`, `PlayerStoredID`, `PlayerSellPrice`) VALUES (?)"
+    const itemValues = [
+        req.body.ItemID,
+        req.body.Description,
+        req.body.PlayerStoredID,
+        req.body.PlayerSellPrice
+    ]
+    db.query(addItem, [itemValues], (err, data) => { 
+        if (err) return res.json(err)
+        console.log("item added")
+        //return res.json("item added")
+    })
+
+    const addWeapon = "INSERT INTO db.weapon (`ItemID`, `AttackPower`, `PlayerWieldID`) VALUES (?)"
+    const weaponValues = [
+        req.body.ItemID,
+        req.body.AttackPower,
+        req.body.PlayerWieldID
+    ]
+    db.query(addWeapon, [weaponValues], (err, data) => {
+        if (err) return res.json(err)
+        console.log("item added")
+        return res.json("hehe xd")
+    })
+
 
 
 }
