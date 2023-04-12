@@ -14,7 +14,10 @@ import {
     login,
     getAllVendors,
     getPlayerLogin,
-    instanceArmour
+    instanceArmour,
+    instanceMeleeWeapon,
+    instanceRangedWeapon,
+    instanceMagicWeapon
 } from "../controllers/player.js"
 
 const router = express.Router()
@@ -33,6 +36,9 @@ router.put("/playerConsumes", playerConsumes)
 router.put("/buyItem/:id", buyItem)
 // instance functions to create instances of items bought by player
 router.put("/instanceArmour", instanceArmour)
+router.put("/instanceMeleeWeapon", instanceMeleeWeapon)
+router.put("/instanceRangedWeapon", instanceRangedWeapon)
+router.put("/instanceMagicWeapon", instanceMagicWeapon)
 //
 router.put("/sellItem/:id", sellItem)
 router.put("/changePassword/:id", changePassword)
