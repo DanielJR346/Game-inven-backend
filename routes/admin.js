@@ -13,7 +13,8 @@ import {
     addOffer,
     changeAttributes,
     login,
-    getAdminLogin
+    getAdminLogin,
+    changeItemWeapon
 } from "../controllers/admin.js"
 
 const router = express.Router()
@@ -29,6 +30,7 @@ router.put("/addItem", addItem)
 router.put("/addOffer", addOffer)
 router.put("/changeAttributes", changeAttributes)
 router.put("/login", login)
+router.put("/changeItemWeapon", changeItemWeapon)
 
 router.post("/createMeleeWeapon/", createMeleeWeapon)
 router.post("/createRangedWeapon/", createRangedWeapon)
