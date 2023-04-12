@@ -12,6 +12,8 @@ import {
     sellItem,
     changePassword,
     login,
+    loginAuthorizedP,
+    loginAuthorizedA,
     getAllVendors,
     getPlayerLogin,
     instanceArmour,
@@ -31,6 +33,8 @@ router.get("/getPlayerName/:id", getPlayerName)
 router.get("/getPlayerInfo/:id", getPlayerInfo)
 router.get("/getAllVendors/", getAllVendors)
 router.get("/getPlayerLogin/:id", getPlayerLogin)
+router.get("/loginAuthorizedP", loginAuthorizedP)
+router.get("/loginAuthorizedA", loginAuthorizedA)
 
 router.put("/equipArmour/:id", equipArmour)
 router.put("/playerConsumes", playerConsumes)

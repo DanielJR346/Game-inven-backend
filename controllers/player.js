@@ -585,3 +585,30 @@ export const login = (req,res) => {
         return res.json("User authenticated!")
     })
 }
+
+/*
+Returns the ID of the player or user that has been authorized with correct login information
+Player version and Admin version
+INPUT:
+    req.body:
+        Username
+        Password
+*/
+export const loginAuthorizedP = (req,res) => {
+    // Get ID of player
+    const player = "SELECT p.UserID FROM db.user u, db.player p WHERE u.UserID = p.UserID AND u.Username = ? AND u.Password = ?"
+    db.query(player, [req.body.Username, req.body.Password], (err,data)=>{
+        if(err) return res.json(err)
+        // if(data.length == 0) return res.status(404).json("Password is incorrect or user does not exist!")
+        return res.json(data)
+    })
+}
+export const loginAuthorizedA = (req,res) => {
+    // Get ID of player
+    const admin = "SELECT a.AdminID FROM db.user u, db.admin a WHERE u.UserID = a.UserID AND u.Username = ? AND u.Password = ?"
+    db.query(admin, [req.body.Username, req.body.Password], (err,data)=>{
+        if(err) return res.json(err)
+        // if(data.length == 0) return res.status(404).json("Password is incorrect or user does not exist!")
+        return res.json(data)
+    })
+}
