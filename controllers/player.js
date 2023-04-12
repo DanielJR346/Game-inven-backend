@@ -439,6 +439,29 @@ export const instanceMagicWeapon = (req,res) => {
 }
 
 /*
+Create instance of consumable
+*/
+export const instanceConsumable = (req,res) => {
+    
+    // Get consumable info
+    const getItemInfo = "SELECT @Effect, @Quantity, @Uses, @Effect := c.Effect, @Quantity := c.Quantity, @Uses := c.Uses FROM db.consumable c WHERE c.ItemID = ?"
+    db.query(getItemInfo, [req.body.ItemID], (err,data)=>{
+        if(err) return res.json(err)
+        console.log("Got item info")
+        // return res.json(data)
+    })
+
+    // Create instance of consumable
+    const instanceConsumable = "INSERT INTO consumable (`ItemID`, `Effect`, `Quantity`, `Uses`, `CurrentUsesLeft`) VALUES (@newItemID, @Effect, @Quantity, @Uses, @Uses)"
+    db.query(instanceConsumable, (err,data)=>{
+        if(err) return res.json(err)
+        console.log("created magic_weapon instance")
+        return res.json(data)
+    })
+
+}
+
+/*
 Player sells an item to a vendor, the vendor can now sell that item (maybe for more than they bought it)
 Input:
     req.params:

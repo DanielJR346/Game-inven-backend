@@ -17,7 +17,8 @@ import {
     instanceArmour,
     instanceMeleeWeapon,
     instanceRangedWeapon,
-    instanceMagicWeapon
+    instanceMagicWeapon,
+    instanceConsumable
 } from "../controllers/player.js"
 
 const router = express.Router()
@@ -39,6 +40,7 @@ router.put("/instanceArmour", instanceArmour)
 router.put("/instanceMeleeWeapon", instanceMeleeWeapon)
 router.put("/instanceRangedWeapon", instanceRangedWeapon)
 router.put("/instanceMagicWeapon", instanceMagicWeapon)
+router.put("/instanceConsumable", instanceConsumable)
 //
 router.put("/sellItem/:id", sellItem)
 router.put("/changePassword/:id", changePassword)

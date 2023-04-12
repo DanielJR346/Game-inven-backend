@@ -17,7 +17,11 @@ import {
     changeItemWeapon,
     changeMagic,
     changeMelee,
-    changeRanged
+    changeRanged,
+    createEquippable,
+    createArmour,
+    createWeapon,
+    createConsumable
 } from "../controllers/admin.js"
 
 const router = express.Router()
@@ -35,10 +39,14 @@ router.put("/changeAttributes", changeAttributes)
 router.put("/login", login)
 router.put("/changeItemWeapon", changeItemWeapon)
 
-router.post("/createMeleeWeapon/", createMeleeWeapon)
-router.post("/createRangedWeapon/", createRangedWeapon)
-router.post("/createMagicWeapon/", createMagicWeapon)
 router.post("/createItem/", createItem)
+router.post("/createEquippable", createEquippable) // Requires createItem
+router.post("/createArmour", createArmour) // Requires createEquippable
+router.post("/createWeapon", createWeapon) // Requires createEquippable
+router.post("/createMeleeWeapon/", createMeleeWeapon) // Requires createWeapo
+router.post("/createRangedWeapon/", createRangedWeapon) // Requires createWeapo
+router.post("/createMagicWeapon/", createMagicWeapon) // Requires createWeapon
+router.post("/createConsumable", createConsumable) // Requires createItem
 router.post("/changeMagic", changeMagic)
 router.post("/changeMelee", changeMelee)
 router.post("/changeRanged", changeRanged)
