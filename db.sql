@@ -139,13 +139,11 @@ CREATE TABLE `consumable` (
   `ItemID` int NOT NULL,
   `Effect` varchar(255) NOT NULL,
   `Quantity` int DEFAULT NULL,
-  `#Uses` int DEFAULT NULL,
-  `PlayerIDConsumed` int DEFAULT NULL,
+  `Uses` int DEFAULT NULL,
+  `CurrentUsesLeft` int DEFAULT NULL,
   PRIMARY KEY (`ItemID`),
-  KEY `PlayerIDConsumed_idx` (`PlayerIDConsumed`),
-  CONSTRAINT `ConsumableItem` FOREIGN KEY (`ItemID`) REFERENCES `item` (`ItemID`),
-  CONSTRAINT `PlayerIDConsumed` FOREIGN KEY (`PlayerIDConsumed`) REFERENCES `player` (`UserID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='We might have to remove PlayerIDConsumed and make it its own table like player_buys_item but player_consumes_potion';
+  CONSTRAINT `ConsumableItem` FOREIGN KEY (`ItemID`) REFERENCES `item` (`ItemID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='Uses is the amount of uses a consumable has per quantity\nCurrentUsesLeft is the amount of uses left for that quantity of the consumable';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -154,7 +152,7 @@ CREATE TABLE `consumable` (
 
 LOCK TABLES `consumable` WRITE;
 /*!40000 ALTER TABLE `consumable` DISABLE KEYS */;
-INSERT INTO `consumable` VALUES (3,'assda',0,3,NULL);
+INSERT INTO `consumable` VALUES (3,'assda',3,3,3),(12,'does nothing',0,3,3);
 /*!40000 ALTER TABLE `consumable` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -207,7 +205,7 @@ CREATE TABLE `item` (
 
 LOCK TABLES `item` WRITE;
 /*!40000 ALTER TABLE `item` DISABLE KEYS */;
-INSERT INTO `item` VALUES (1,'test instanceItem',3,123),(2,'test melee weapon',1,50),(3,'range weapon for testing',NULL,0),(4,'test melee weapon',1,0),(5,'test melee weapon',1,0),(6,'testing changeAttributes admin command',1,6969),(7,'test melee weapon final',2,0),(8,'test melee weapon final again',2,0),(9,'magic weapon for testing',2,0),(10,'test melee weapon final again with NULL playerWieldID',2,0),(11,'bruh moment',2,999),(12,'test melee weapon final again with without inputting PlayerWieldID and ItemID',2,0),(13,'test melee weapon final again with without inputting PlayerWieldID and ItemID',2,0),(14,'test melee weapon final again with without inputting PlayerWieldID and ItemID',2,0),(15,'test melee weapon final again with without inputting PlayerWieldID and ItemID',2,0),(16,'test melee weapon final again with without inputting PlayerWieldID and ItemID',2,0),(17,'test melee weapon final again with without inputting PlayerWieldID and ItemID',2,0),(18,'test melee weapon final again with without inputting PlayerWieldID and ItemID',2,0),(19,'test melee weapon final again with without inputting PlayerWieldID and ItemID',2,0),(20,'ples work',NULL,0),(23,'testing test2 function',1,0),(24,'testing test2 function',1,0),(25,'testing variable uses',NULL,1),(100,'testing if I can return the itemID',NULL,0),(101,'testing if I can return the itemID',NULL,0),(102,'testing if I can return the itemID',NULL,0),(103,'testing if I can return the itemID',NULL,0),(104,'testing if I can return the itemID',NULL,0),(105,'testing if I can return the itemID',NULL,0),(106,'testing if I can return the itemID',NULL,0),(107,'testing if I can return the itemID',NULL,0),(108,'testing if I can return the itemID',NULL,0),(109,'testing if I can return the itemID',NULL,0),(110,'testing if I can return the itemID',NULL,0),(111,'testing if this shows up on the table',NULL,0),(112,'testing if this shows up on the table',NULL,0),(113,'testing if I can return the itemID',NULL,0),(114,'testing if I can return the itemID',NULL,0),(115,'testing if I can return the itemID',NULL,0),(116,'testing if I can return the itemID',NULL,0),(117,'testing if I can return the itemID',NULL,0),(118,'testing if I can return the itemID, is this item showing up?',NULL,0),(119,'testing if I can return the itemID, is this item showing up?',NULL,0),(120,'testing if I can return the itemID, is this item showing up?',NULL,0),(121,'test melee weapon again',NULL,0),(122,'test melee weapon again',NULL,0),(123,'test melee weapon again',NULL,0),(124,'test melee weapon again',NULL,0),(125,'test melee weapon again',NULL,0),(126,'test melee weapon again',NULL,0),(127,'test melee weapon again',NULL,0),(128,'test melee weapon again',NULL,0),(129,'test melee weapon again',NULL,0),(130,'test melee weapon again',NULL,0),(131,'test melee weapon again',NULL,0),(132,'test melee weapon again',NULL,0),(133,'ples work',NULL,0),(134,'testing test2 function',NULL,0),(135,'bruh moment',1,NULL),(136,'test melee weapon',1,NULL),(137,'test melee weapon',1,NULL),(138,'test melee weapon',1,NULL),(139,'test melee weapon',1,NULL),(140,'test melee weapon',1,NULL),(141,'test melee weapon',1,NULL),(142,'test melee weapon',1,0),(143,'test melee weapon',1,0),(144,'test melee weapon',1,0),(145,'test melee weapon',1,0),(146,'test melee weapon',1,0),(147,'test melee weapon',1,0),(148,'test melee weapon',1,0),(149,'test melee weapon',1,0),(150,'test melee weapon',1,0),(151,'test melee weapon',1,0),(152,'test melee weapon',1,123),(153,'test instanceItem',1,123),(154,'test instanceItem',1,123),(155,'test instanceItem',1,123),(156,'test instanceItem',1,123),(157,'test instanceItem',1,123),(158,'test instanceItem',1,123),(159,'test instanceItem',1,123),(160,'test instanceItem',1,123),(161,'test instanceItem',1,123),(162,'test instanceItem',1,123),(163,'test instanceItem',1,123),(164,'test instanceItem',1,123),(165,'test instanceItem',1,123),(166,'test melee weapon',1,0),(167,'test melee weapon',1,0),(168,'range weapon for testing',1,0),(169,'range weapon for testing',1,0),(170,'range weapon for testing',1,0),(171,'range weapon for testing',1,0),(172,'test melee weapon',1,0),(173,'test melee weapon',1,0),(174,'test melee weapon',1,0),(175,'test melee weapon',1,0),(176,'test melee weapon',1,0),(177,'test melee weapon',1,0),(178,'test melee weapon',1,0),(179,'test melee weapon',1,0),(180,'range weapon for testing',1,0),(181,'range weapon for testing',1,0),(182,'magic weapon for testing',1,0),(183,'magic weapon for testing',1,0),(184,'magic weapon for testing',1,0),(185,'magic weapon for testing',1,0),(186,'magic weapon for testing',1,0),(187,'magic weapon for testing',1,0),(188,'magic weapon for testing',1,0),(189,'magic weapon for testing',1,0);
+INSERT INTO `item` VALUES (1,'test instanceItem',3,123),(2,'test melee weapon',1,50),(3,'range weapon for testing',NULL,0),(4,'test melee weapon',1,0),(5,'test melee weapon',1,0),(6,'testing changeAttributes admin command',1,6969),(7,'test melee weapon final',2,0),(8,'test melee weapon final again',2,0),(9,'magic weapon for testing',2,0),(10,'test melee weapon final again with NULL playerWieldID',2,0),(11,'bruh moment',2,999),(12,'potion test item',NULL,0),(13,'test melee weapon final again with without inputting PlayerWieldID and ItemID',2,0),(14,'test melee weapon final again with without inputting PlayerWieldID and ItemID',2,0),(15,'test melee weapon final again with without inputting PlayerWieldID and ItemID',2,0),(16,'test melee weapon final again with without inputting PlayerWieldID and ItemID',2,0),(17,'test melee weapon final again with without inputting PlayerWieldID and ItemID',2,0),(18,'test melee weapon final again with without inputting PlayerWieldID and ItemID',2,0),(19,'test melee weapon final again with without inputting PlayerWieldID and ItemID',2,0),(20,'ples work',NULL,0),(23,'testing test2 function',1,0),(24,'testing test2 function',1,0),(25,'testing variable uses',NULL,1),(100,'testing if I can return the itemID',NULL,0),(101,'testing if I can return the itemID',NULL,0),(102,'testing if I can return the itemID',NULL,0),(103,'testing if I can return the itemID',NULL,0),(104,'testing if I can return the itemID',NULL,0),(105,'testing if I can return the itemID',NULL,0),(106,'testing if I can return the itemID',NULL,0),(107,'testing if I can return the itemID',NULL,0),(108,'testing if I can return the itemID',NULL,0),(109,'testing if I can return the itemID',NULL,0),(110,'testing if I can return the itemID',NULL,0),(111,'testing if this shows up on the table',NULL,0),(112,'testing if this shows up on the table',NULL,0),(113,'testing if I can return the itemID',NULL,0),(114,'testing if I can return the itemID',NULL,0),(115,'testing if I can return the itemID',NULL,0),(116,'testing if I can return the itemID',NULL,0),(117,'testing if I can return the itemID',NULL,0),(118,'testing if I can return the itemID, is this item showing up?',NULL,0),(119,'testing if I can return the itemID, is this item showing up?',NULL,0),(120,'testing if I can return the itemID, is this item showing up?',NULL,0),(121,'test melee weapon again',NULL,0),(122,'test melee weapon again',NULL,0),(123,'test melee weapon again',NULL,0),(124,'test melee weapon again',NULL,0),(125,'test melee weapon again',NULL,0),(126,'test melee weapon again',NULL,0),(127,'test melee weapon again',NULL,0),(128,'test melee weapon again',NULL,0),(129,'test melee weapon again',NULL,0),(130,'test melee weapon again',NULL,0),(131,'test melee weapon again',NULL,0),(132,'test melee weapon again',NULL,0),(133,'ples work',NULL,0),(134,'testing test2 function',NULL,0),(135,'bruh moment',1,NULL),(136,'test melee weapon',1,NULL),(137,'test melee weapon',1,NULL),(138,'test melee weapon',1,NULL),(139,'test melee weapon',1,NULL),(140,'test melee weapon',1,NULL),(141,'test melee weapon',1,NULL),(142,'test melee weapon',1,0),(143,'test melee weapon',1,0),(144,'test melee weapon',1,0),(145,'test melee weapon',1,0),(146,'test melee weapon',1,0),(147,'test melee weapon',1,0),(148,'test melee weapon',1,0),(149,'test melee weapon',1,0),(150,'test melee weapon',1,0),(151,'test melee weapon',1,0),(152,'test melee weapon',1,123),(153,'test instanceItem',1,123),(154,'test instanceItem',1,123),(155,'test instanceItem',1,123),(156,'test instanceItem',1,123),(157,'test instanceItem',1,123),(158,'test instanceItem',1,123),(159,'test instanceItem',1,123),(160,'test instanceItem',1,123),(161,'test instanceItem',1,123),(162,'test instanceItem',1,123),(163,'test instanceItem',1,123),(164,'test instanceItem',1,123),(165,'test instanceItem',1,123),(166,'test melee weapon',1,0),(167,'test melee weapon',1,0),(168,'range weapon for testing',1,0),(169,'range weapon for testing',1,0),(170,'range weapon for testing',1,0),(171,'range weapon for testing',1,0),(172,'test melee weapon',1,0),(173,'test melee weapon',1,0),(174,'test melee weapon',1,0),(175,'test melee weapon',1,0),(176,'test melee weapon',1,0),(177,'test melee weapon',1,0),(178,'test melee weapon',1,0),(179,'test melee weapon',1,0),(180,'range weapon for testing',1,0),(181,'range weapon for testing',1,0),(182,'magic weapon for testing',1,0),(183,'magic weapon for testing',1,0),(184,'magic weapon for testing',1,0),(185,'magic weapon for testing',1,0),(186,'magic weapon for testing',1,0),(187,'magic weapon for testing',1,0),(188,'magic weapon for testing',1,0),(189,'magic weapon for testing',1,0);
 /*!40000 ALTER TABLE `item` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -323,11 +321,11 @@ DROP TABLE IF EXISTS `player_consumes_consumable`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `player_consumes_consumable` (
-  `ConsumableID` int DEFAULT NULL,
+  `ItemID` int DEFAULT NULL,
   `PlayerConsumedID` int DEFAULT NULL,
-  KEY `ConsumableID_idx` (`ConsumableID`),
+  KEY `ConsumableID_idx` (`ItemID`),
   KEY `ConsumerID_idx` (`PlayerConsumedID`),
-  CONSTRAINT `ConsumableID` FOREIGN KEY (`ConsumableID`) REFERENCES `consumable` (`ItemID`),
+  CONSTRAINT `ConsumableID` FOREIGN KEY (`ItemID`) REFERENCES `consumable` (`ItemID`),
   CONSTRAINT `ConsumerID` FOREIGN KEY (`PlayerConsumedID`) REFERENCES `player` (`UserID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='records which potions a player consumes';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -338,7 +336,7 @@ CREATE TABLE `player_consumes_consumable` (
 
 LOCK TABLES `player_consumes_consumable` WRITE;
 /*!40000 ALTER TABLE `player_consumes_consumable` DISABLE KEYS */;
-INSERT INTO `player_consumes_consumable` VALUES (1,1),(3,1),(3,1),(3,1),(3,1);
+INSERT INTO `player_consumes_consumable` VALUES (1,1),(3,1),(3,1),(3,1),(3,1),(NULL,1),(NULL,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(NULL,1),(NULL,1),(NULL,1),(NULL,1),(NULL,1),(NULL,1),(NULL,1),(NULL,1),(NULL,1),(NULL,1),(NULL,1),(NULL,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1);
 /*!40000 ALTER TABLE `player_consumes_consumable` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -564,4 +562,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-04-12  2:29:31
+-- Dump completed on 2023-04-12  3:16:50

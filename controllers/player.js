@@ -128,33 +128,43 @@ Does not utilize #ofUses
 INPUT:
     req.body:
         PlayerID
-        ConsumableID
+        ItemID
 */
 export const playerConsumes = (req,res) => {
+
     // Player first consumes the potion
-    const consume = "INSERT INTO db.player_consumes_consumable (`ConsumableID`, `PlayerConsumedID`) VALUES (?)"
-    const values = [req.body.ConsumableID, req.body.PlayerID]
+    const consume = "INSERT INTO db.player_consumes_consumable (`ItemID`, `PlayerConsumedID`) VALUES (?)"
+    const values = [req.body.ItemID, req.body.PlayerID]
     db.query(consume, [values], (err,data)=>{
         if(err) return res.json(err)
         console.log("consumable consumed")
         // return res.json("consumable consumed!")
     })
 
-    // Decrement the quantity of that potion
-    const decrementQuant = "UPDATE db.consumable c SET c.Quantity = c.Quantity -1 WHERE c.ItemID = ?"
-    db.query(decrementQuant, [req.body.ConsumableID], (err,data)=>{
+    // Decrement CurrentUsesLeft by 1
+    const decrementUses = "UPDATE db.consumable c SET c.CurrentUsesLeft = c.CurrentUsesLeft -1 WHERE c.ItemID = ?"
+    db.query(decrementUses, [req.body.ItemID], (err,data)=>{
         if(err) return res.json(err)
-        console.log("quantity decreased")
-        // return res.json("quantity decremented!")
+        console.log("current uses left decreased")
+        // return res.json("current uses left decremented!")
     })
 
-    // Remove any potions from players inventory that have 0 quantity left
-    const checkQuant = "UPDATE db.item i INNER JOIN db.consumable c ON i.ItemID = c.ItemID SET i.PlayerStoredID = NULL WHERE c.Quantity = 0"
+    // Decrement Quantity by 1 if CurrentUsesLeft == 0, then reset 
+    const decrementQuantity = "UPDATE db.consumable c SET c.Quantity = c.Quantity -1, c.CurrentUsesLeft = c.Uses WHERE c.ItemID = ? AND c.CurrentUsesLeft = 0"
+    db.query(decrementQuantity, [req.body.ItemID], (err,data)=>{
+        if(err) return res.json(err)
+        console.log("decremented quantity")
+        // return res.json("decremented quantity")
+    })
+
+    // Remove any potions from players inventory that have 0 quantity and currentUsesLeft == Uses
+    const checkQuant = "UPDATE db.item i INNER JOIN db.consumable c ON i.ItemID = c.ItemID SET i.PlayerStoredID = NULL WHERE c.Quantity = 0 AND c.CurrentUsesLeft = c.Uses"
     db.query(checkQuant, (err,data)=>{
         if(err) return res.json(err)
         console.log("removed empty consumables!")
-        return res.json("removed empty consumables!")
+        return res.json("consumable consumed!")
     })
+
 }
 
 /*
