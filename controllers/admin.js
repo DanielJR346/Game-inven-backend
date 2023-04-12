@@ -305,6 +305,9 @@ export const changeAttributes = (req,res) => {
     })
 }
 
+/*
+ Changes Weapon Attributes 
+ */ 
 export const changeItemWeapon = (req, res) => {
 
     // Deletes item from all weapon/item tables
@@ -342,8 +345,21 @@ export const changeItemWeapon = (req, res) => {
         console.log("item added")
         return res.json("hehe xd")
     })
+}
 
+export const changeMagic = (req, res) => {
 
+    const chMagic = "INSERT INTO db.magic_weapon (`WeaponID`, `ManaCost`) VALUES (?)"
+    const values = [
+        req.body.WeaponID,
+        req.body.ManaCost
+    ]
+
+    db.query(chMagic, [values], (err, data) => {
+        if (err) return res.json(err)
+        console.log("magic weapon added")
+        return res.json("magic weapon added")
+    })
 
 }
 

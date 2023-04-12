@@ -14,7 +14,8 @@ import {
     changeAttributes,
     login,
     getAdminLogin,
-    changeItemWeapon
+    changeItemWeapon,
+    changeMagic
 } from "../controllers/admin.js"
 
 const router = express.Router()
@@ -36,4 +37,5 @@ router.post("/createMeleeWeapon/", createMeleeWeapon)
 router.post("/createRangedWeapon/", createRangedWeapon)
 router.post("/createMagicWeapon/", createMagicWeapon)
 router.post("/createItem/", createItem)
+router.post("/changeMagic", changeMagic)
 export default router
