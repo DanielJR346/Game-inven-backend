@@ -11,7 +11,9 @@ import {
     buyItem,
     sellItem,
     changePassword,
-    login
+    login,
+    getAllVendors,
+    getPlayerLogin
 } from "../controllers/player.js"
 
 const router = express.Router()
@@ -22,6 +24,8 @@ router.get("/getEquippedItems/:id", getEquippedItems)
 router.get("/getConsumables/:id", getConsumables)
 router.get("/getPlayerName/:id", getPlayerName)
 router.get("/getPlayerInfo/:id", getPlayerInfo)
+router.get("/getAllVendors/", getAllVendors)
+router.get("/getPlayerLogin/:id", getPlayerLogin)
 
 router.put("/equipArmour/:id", equipArmour)
 router.put("/playerConsumes", playerConsumes)

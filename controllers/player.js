@@ -77,6 +77,29 @@ export const getPlayerInfo = (req,res) => {
     })
 }
 
+/*
+ Get all available vendors
+ */ 
+export const getAllVendors = (req, res) => {
+    const q = "SELECT * FROM db.vendor"
+    db.query(q, req, (err, data) => {
+        if (err) return res.json(err)
+        return res.json(data)
+    })
+}
+
+/*
+ Get Player ID 
+ */
+export const getPlayerLogin = (req, res) => {
+    const PlayerID = req.params.id;
+    const q = "SELECT p.UserID FROM db.player p WHERE p.UserID = ?"
+    db.query(q, [PlayerID], (err, data) => {
+        if (err) return res.json(err)
+        return res.json(data)
+    })
+}
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Player POST and PUT requests
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
