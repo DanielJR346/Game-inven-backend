@@ -17,6 +17,18 @@ export const getAdminInfo = (req, res) => {
 }
 
 /*
+ Get Admin Login 
+ */
+export const getAdminLogin = (req, res) => {
+    const UserID = req.params.id;
+    const q = "SELECT a.AdminID FROM db.admin a WHERE a.UserID = (?)"
+    db.query(q, [UserID], (err, data) => {
+        if (err) return res.json(err)
+        return res.json(data)
+    })
+}
+
+/*
  Get Player Inventory
  */
 export const allItems = (req, res) => {
@@ -284,12 +296,13 @@ Input:
         Description
         PlayerSellPrice
 */
-export const changeAttributes = (req,res) => {
-    const changeAttr = "UPDATE db.item i SET i.Description = ?, i.PlayerSellPrice = ? WHERE i.ItemID = ?"
-    db.query(changeAttr, [req.body.Description, req.body.PlayerSellPrice, req.body.ItemID], (err, data) => {
+export const changeAttributes = (req, res) => {
+    const values = [req.body.Description, req.body.ItemID];
+    const changeAttr = "UPDATE db.item i SET i.Description = ? WHERE i.ItemID` = ?"
+    db.query(changeAttr, [...values], (err, data) => {
         if (err) return res.json(err)
-        console.log("offer added to vendor!")
-        return res.json("offer added to vendor!")
+        console.log("changed item attribute(s)!")
+        return res.json("changed item attribute(s)!")
     })
 }
 
