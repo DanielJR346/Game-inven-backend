@@ -298,7 +298,7 @@ Input:
 */
 export const changeAttributes = (req,res) => {
     const changeAttr = "UPDATE db.item i SET i.Description = ?, i.PlayerSellPrice = ? WHERE i.ItemID = ?"
-    db.query(changeAttr, [req.body.Description, req.body.PlayerSellPrice, req.body.ItemID], (err, data) => {
+    db.query(changeAttr, [req.body.Description,  req.body.PlayerSellPrice, req.body.ItemID], (err, data) => {
         if (err) return res.json(err)
         console.log("offer added to vendor!")
         return res.json("offer added to vendor!")
@@ -306,6 +306,8 @@ export const changeAttributes = (req,res) => {
 }
 
 export const changeItemWeapon = (req, res) => {
+
+    const 
 
 
 }
