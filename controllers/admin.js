@@ -307,8 +307,6 @@ export const changeAttributes = (req,res) => {
 
 export const changeItemWeapon = (req, res) => {
 
-    const 
-
 
 }
 
