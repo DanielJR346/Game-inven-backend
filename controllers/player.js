@@ -106,7 +106,6 @@ export const getPlayerLogin = (req, res) => {
 
 /*
 Player wants to equip a piece of armor
-NOTE: NOT FINISHED!!!! doesnt check if player is already equipping an armor piece of that type
 */
 export const equipArmour = (req,res) => {
     const PlayerID = req.params.id;
@@ -120,6 +119,23 @@ export const equipArmour = (req,res) => {
         return res.json("Armor Equipped!")
     })
 }
+
+/*
+Player wields a weapon
+INPUT:
+    req.body:
+        ItemID
+        UserID
+*/
+export const wieldWeapon = (req,res) => {
+    const wieldWeapon = "UPDATE db.weapon SET `PlayerWieldID` = ? WHERE `ItemID` = ?"
+    db.query(wieldWeapon, [req.body.UserID, req.body.ItemID], (err,data)=>{
+        if(err) return res.json(err)
+        console.log("weapon wielded!")
+        return res.json("weapon wielded!")
+    })
+}
+
 
 /*
 Player consumes a consumable (lowers the quantity of consumables by 1)
@@ -714,4 +730,47 @@ export const loginAuthorizedA = (req,res) => {
         // if(data.length == 0) return res.status(404).json("Password is incorrect or user does not exist!")
         return res.json(data)
     })
+}
+
+/*
+Checks if a player can equip a piece of armor (checks if they are already wearing something of that armour type)
+INPUT:
+    req.body:
+        ItemID
+        UserID
+*/
+export const canPlayerEquip = (req,res) => {
+    // Get armour of item they want to equip
+    const getType = "SELECT @type, @type := a.Type FROM db.armour a WHERE a.ItemID = ?"
+    db.query(getType, [req.body.ItemID], (err,data)=>{
+        if(err) return res.json(err)
+        console.log(data)
+        // return res.json(data)
+    })
+
+    // Check if the player is already wearing an armour piece of that type
+    const armourCheck = "SELECT * FROM db.armour a WHERE a.EquippedID = ? AND a.Type = @type"
+    db.query(armourCheck, [req.body.UserID], (err,data)=>{
+        if(err) return res.json(err)
+        if (data.length == 0) return res.json("Player is not wearing this armour type!")
+        else return res.json("Player is already wearing that armour type!")
+        // return res.json(data)
+    })
+}
+
+/*
+Checks if a player is already wielding a weapon (prevents wielding multiple weapons)
+INPUT:
+    req.body:
+        UserID
+*/
+export const canPlayerWield = (req,res) => {
+    // Check if player is already wielding a weapon
+    const weaponCheck = "SELECT * FROM db.weapon w WHERE w.PlayerWieldID = ?"
+    db.query(weaponCheck, [req.body.UserID], (err,data)=>{
+        if(err) return res.json(err)
+        if (data.length == 0) return res.json("Player is not wielding a weapon")
+        else return res.json("Player is already wielding a weapon")
+    })
+
 }
