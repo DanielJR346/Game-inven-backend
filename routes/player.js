@@ -9,6 +9,9 @@ import {
     equipArmour,
     playerConsumes,
     buyItem,
+    canPlayerAffordThis,
+    canPlayerCarryThis,
+    checkInvenCapacity,
     sellItem,
     changePassword,
     login,
@@ -35,6 +38,9 @@ router.get("/getAllVendors/", getAllVendors)
 router.get("/getPlayerLogin/:id", getPlayerLogin)
 router.get("/loginAuthorizedP", loginAuthorizedP)
 router.get("/loginAuthorizedA", loginAuthorizedA)
+router.get("/canPlayerAffordThis", canPlayerAffordThis)
+router.get("/canPlayerCarryThis", canPlayerCarryThis)
+router.get("/checkInvenCapacity", checkInvenCapacity)
 
 router.put("/equipArmour/:id", equipArmour)
 router.put("/playerConsumes", playerConsumes)

@@ -168,6 +168,109 @@ export const playerConsumes = (req,res) => {
 }
 
 /*
+Checks if a player can afford to purchase an item
+INPUT:
+    req.body:
+        ItemID
+        VendorID
+        UserID
+*/
+export const canPlayerAffordThis = (req,res) => {
+    // Should check that the player has enough money to make the purcahse,
+    // Get Price of item
+    const getPrice = "SELECT @price, @price := v.Price FROM vendor_sells_item v WHERE v.ItemID = ? AND v.VendorID = ?"
+    db.query(getPrice, [req.body.ItemID,req.body.VendorID], (err,data)=>{
+        if(err) return res.json(err)
+        console.log("got price")
+        // console.log(data)
+        // return res.json(data)
+    })
+
+    // Get Money of player
+    const getMoney = "SELECT @money, @price, @money := p.Money FROM player p WHERE p.UserID = ?"
+    db.query(getMoney, [req.body.UserID], (err,data)=>{
+        if(err) return res.json(err)
+        console.log("got money")
+        // console.log(data)
+        // return res.json(data)
+    })
+
+    // Check if the player can afford the item
+    // If (data.length == 0) player cant afford the item
+    // Else player can afford it
+    const moneyCheck = "SELECT * FROM db.player WHERE @price <= @money"
+    db.query(moneyCheck, (err,data)=>{
+        if (err) return res.json(err)
+        if (data.length == 0) res.json("You can't afford this item!")
+        else res.json("You can buy this item")
+    })
+}
+
+/*
+Check if the player can carry the item in their inventory after purchasing
+Only needed for equippable items
+INPUT:
+    req.body:
+        ItemID
+        VendorID
+        UserID
+*/
+export const canPlayerCarryThis =(req,res) => {
+    // Get weight of the item
+    const itemWeight = "SELECT @itemWeight, @itemWeight := e.Weight FROM db.item i, db.equippable e WHERE i.ItemID = e.ItemID AND i.ItemID = ?"
+    db.query(itemWeight, [req.body.ItemID], (err,data)=> {
+        if (err) return res.json(err)
+        // return res.json(data)
+    })
+
+    // Get weight that the player is carrying IF they are holding the item
+    const getPlayerCarry = "SELECT @itemWeight,@playerWeight, @playerWeight := SUM(e.Weight) + @itemWeight FROM db.item i, db.equippable e WHERE i.PlayerStoredID = ? AND i.ItemID = e.ItemID"
+    db.query(getPlayerCarry, [req.body.UserID], (err,data)=> {
+        if (err) return res.json(err)
+        console.log(data)
+        // return res.json(data)
+    })
+
+    // Check if @itemWeight + @weight < players carryWeight
+    // const weightCheck = "SELECT * FROM db.player p WHERE @itemWeight + @weight <= p.carryWeight AND p.UserID = ?"
+    const weightCheck = "SELECT * FROM db.player p WHERE p.UserID = ? AND @playerWeight <= p.carryWeight"
+    db.query(weightCheck, [req.body.UserID], (err,data)=> {
+        if (err) return res.json(err)
+        if (data.length == 0) return res.json("Player can't carry this")
+        else return res.json("Player can carry this!")
+    })
+
+}
+
+/*
+Check if a player has enough inventory space to hold a purchased item
+INPUT:
+    req.body:
+        ItemID
+        VendorID
+        UserID
+*/
+export const checkInvenCapacity = (req,res) => {
+    // Get current item count in players inventory
+    const itemCount = "SELECT @count, @count := COUNT(i.ItemID) FROM db.item i WHERE i.PlayerStoredID = ?"
+    db.query(itemCount, [req.body.UserID], (err,data)=> {
+        if (err) return res.json(err)
+        console.log(data)
+        // return res.json(data)
+    })
+
+    // Check if player can hold another item in their inventory
+    const itemCheck = "SELECT * FROM db.player p WHERE p.UserID = ? AND @count + 1 <= p.InvCapacity"
+    db.query(itemCheck, [req.body.UserID], (err,data)=> {
+        if (err) return res.json(err)
+        // console.log(data)
+        if (data.length == 0) return res.json("inventory full!")
+        return res.json("sufficient inventory space!")
+    })
+}
+
+
+/*
 Player buys an item
 INPUT:
     req.params:
