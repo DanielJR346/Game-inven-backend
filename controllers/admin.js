@@ -97,7 +97,7 @@ export const removePlayerItem = (req,res) => {
 export const createItem = (req, res) => {
     // Create an item
     const q = "INSERT INTO item (`ItemID`, `Description`, `PlayerStoredID`, `PlayerSellPrice`) VALUES (NULL, ?, ?, ?)";
-    db.query(q, [req.body.Description, req.body.PlayerStoredID], (err, data) => {
+    db.query(q, [req.body.Description, req.body.PlayerStoredID, req.body.PlayerSellPrice], (err, data) => {
         if (err) return res.json(err)
         console.log("item created!")
         // return res.json("item created!")
