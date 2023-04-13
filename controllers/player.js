@@ -838,3 +838,19 @@ export const isMelee = (req,res) => {
         else return res.json(data)
     })
 }
+export const isRanged = (req, res) => {
+    const check = "SELECT * FROM db.ranged_weapon x WHERE x.WeaponID = ?"
+    db.query(check, [req.body.ItemID], (err, data) => {
+        if (err) return res.json(err)
+        if (data.length == 0) return res.json("not ranged weapon")
+        else return res.json(data)
+    })
+}
+export const isMagic = (req, res) => {
+    const check = "SELECT * FROM db.magic_weapon x WHERE x.WeaponID = ?"
+    db.query(check, [req.body.ItemID], (err, data) => {
+        if (err) return res.json(err)
+        if (data.length == 0) return res.json("not magic weapon")
+        else return res.json(data)
+    })
+}

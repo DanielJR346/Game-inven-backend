@@ -31,7 +31,9 @@ import {
     canPlayerWield,
     isConsumable,
     isArmour,
-    isMelee
+    isMelee,
+    isRanged,
+    isMagic
 } from "../controllers/player.js"
 
 const router = express.Router()
@@ -54,6 +56,8 @@ router.get("/canPlayerWield", canPlayerWield)
 router.get("/isConsumable", isConsumable)
 router.get("/isArmour", isArmour)
 router.get("/isMelee", isMelee)
+router.get("/isRanged", isRanged)
+router.get("/isMagic", isMagic)
 
 router.put("/equipArmour/:id", equipArmour)
 router.put("/unequipArmour/:id", unequipArmour)
