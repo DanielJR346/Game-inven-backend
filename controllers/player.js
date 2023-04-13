@@ -121,6 +121,24 @@ export const equipArmour = (req,res) => {
 }
 
 /*
+Player unequips a piece of armour
+INPUT:
+    req.params:
+        UserID
+    req.body:
+        ItemID
+*/
+export const unequipArmour = (req,res) => {
+    const unequip = "UPDATE db.armour SET `EquippedID` = NULL WHERE `ItemID` = ? AND `EquippedID` = ?"
+    db.query(unequip, [req.body.ItemID, req.params.id], (err,data)=>{
+        if(err) return res.json(err)
+        console.log("Armour unequipped")
+        return res.json("Armour unequipped")
+    })
+}
+
+
+/*
 Player wields a weapon
 INPUT:
     req.body:
@@ -136,6 +154,21 @@ export const wieldWeapon = (req,res) => {
     })
 }
 
+/*
+Player unwields a weapon
+INPUT:
+    req.body:
+        ItemID
+        UserID
+*/
+export const unwieldWeapon = (req,res) =>{
+    const unwieldWeapon = "UPDATE db.weapon SET `PlayerWieldID` = NULL WHERE `ItemID` = ? AND `PlayerWieldID` = ?"
+    db.query(unwieldWeapon, [req.body.ItemID, req.body.UserID], (err,data)=>{
+        if(err) return res.json(err)
+        console.log("weapon unwielded!")
+        return res.json("weapon unwielded!")
+    })
+}
 
 /*
 Player consumes a consumable (lowers the quantity of consumables by 1)

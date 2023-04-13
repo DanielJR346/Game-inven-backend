@@ -289,101 +289,103 @@ export const changeAttributes = (req,res) => {
     })
 }
 
-/*
- Changes Weapon Attributes 
- */ 
-export const changeItemWeapon = (req, res) => {
 
-    // Deletes item from all weapon/item tables
-    // Cascades through all tables
-    const ItemID = req.body.ItemID
-    const delItem = "DELETE FROM db.item i WHERE i.ItemID = ?"
-    db.query(delItem, ItemID, (err, data) => {
-    if (err) return res.json(err)
-        console.log("item deleted")
-        //return res.json("item deleted")
-    })
+// OUTDATED, NO LONGER WORK WITH CURRENT db.sql!!!
+// /*
+//  Changes Weapon Attributes 
+//  */ 
+// export const changeItemWeapon = (req, res) => {
 
-    // Adds item with the correct ItemID
-    const addItem = "INSERT INTO db.item (`ItemID`, `Description`, `PlayerStoredID`, `PlayerSellPrice`) VALUES (?)"
-    const itemValues = [
-        req.body.ItemID,
-        req.body.Description,
-        req.body.PlayerStoredID,
-        req.body.PlayerSellPrice
-    ]
-    db.query(addItem, [itemValues], (err, data) => { 
-        if (err) return res.json(err)
-        console.log("item added")
-        //return res.json("item added")
-    })
+//     // Deletes item from all weapon/item tables
+//     // Cascades through all tables
+//     const ItemID = req.body.ItemID
+//     const delItem = "DELETE FROM db.item i WHERE i.ItemID = ?"
+//     db.query(delItem, ItemID, (err, data) => {
+//     if (err) return res.json(err)
+//         console.log("item deleted")
+//         //return res.json("item deleted")
+//     })
 
-    const addWeapon = "INSERT INTO db.weapon (`ItemID`, `AttackPower`, `PlayerWieldID`) VALUES (?)"
-    const weaponValues = [
-        req.body.ItemID,
-        req.body.AttackPower,
-        req.body.PlayerWieldID
-    ]
-    db.query(addWeapon, [weaponValues], (err, data) => {
-        if (err) return res.json(err)
-        console.log("item added")
-        return res.json("hehe xd")
-    })
-}
+//     // Adds item with the correct ItemID
+//     const addItem = "INSERT INTO db.item (`ItemID`, `Description`, `PlayerStoredID`, `PlayerSellPrice`) VALUES (?)"
+//     const itemValues = [
+//         req.body.ItemID,
+//         req.body.Description,
+//         req.body.PlayerStoredID,
+//         req.body.PlayerSellPrice
+//     ]
+//     db.query(addItem, [itemValues], (err, data) => { 
+//         if (err) return res.json(err)
+//         console.log("item added")
+//         //return res.json("item added")
+//     })
 
-/*
- Changes Magic Weapon Attributes 
- */ 
-export const changeMagic = (req, res) => {
+//     const addWeapon = "INSERT INTO db.weapon (`ItemID`, `AttackPower`, `PlayerWieldID`) VALUES (?)"
+//     const weaponValues = [
+//         req.body.ItemID,
+//         req.body.AttackPower,
+//         req.body.PlayerWieldID
+//     ]
+//     db.query(addWeapon, [weaponValues], (err, data) => {
+//         if (err) return res.json(err)
+//         console.log("item added")
+//         return res.json("hehe xd")
+//     })
+// }
 
-    const chMagic = "INSERT INTO db.magic_weapon (`WeaponID`, `ManaCost`) VALUES (?)"
-    const values = [
-        req.body.WeaponID,
-        req.body.ManaCost
-    ]
+// /*
+//  Changes Magic Weapon Attributes 
+//  */ 
+// export const changeMagic = (req, res) => {
 
-    db.query(chMagic, [values], (err, data) => {
-        if (err) return res.json(err)
-        console.log("magic weapon added")
-        return res.json("magic weapon added")
-    })
-}
+//     const chMagic = "INSERT INTO db.magic_weapon (`WeaponID`, `ManaCost`) VALUES (?)"
+//     const values = [
+//         req.body.WeaponID,
+//         req.body.ManaCost
+//     ]
 
-/*
- Changes Ranged Weapon Attributes 
- */ 
-export const changeRanged = (req, res) => {
+//     db.query(chMagic, [values], (err, data) => {
+//         if (err) return res.json(err)
+//         console.log("magic weapon added")
+//         return res.json("magic weapon added")
+//     })
+// }
 
-    const chRanged = "INSERT INTO db.ranged_weapon (`WeaponID`, `DrawSpeed`) VALUES (?)"
-    const values = [
-        req.body.WeaponID,
-        req.body.DrawSpeed
-    ]
+// /*
+//  Changes Ranged Weapon Attributes 
+//  */ 
+// export const changeRanged = (req, res) => {
 
-    db.query(chRanged, [values], (err, data) => {
-        if (err) return res.json(err)
-        console.log("ranged weapon added")
-        return res.json("ranged weapon added")
-    })
-}
+//     const chRanged = "INSERT INTO db.ranged_weapon (`WeaponID`, `DrawSpeed`) VALUES (?)"
+//     const values = [
+//         req.body.WeaponID,
+//         req.body.DrawSpeed
+//     ]
 
-/*
- Changes Melee Weapon Attributes 
- */ 
-export const changeMelee = (req, res) => {
+//     db.query(chRanged, [values], (err, data) => {
+//         if (err) return res.json(err)
+//         console.log("ranged weapon added")
+//         return res.json("ranged weapon added")
+//     })
+// }
 
-    const chMelee = "INSERT INTO db.melee_weapon (`WeaponID`, `AttackSpeed`) VALUES (?)"
-    const values = [
-        req.body.WeaponID,
-        req.body.AttackSpeed
-    ]
+// /*
+//  Changes Melee Weapon Attributes 
+//  */ 
+// export const changeMelee = (req, res) => {
 
-    db.query(chMelee, [values], (err, data) => {
-        if (err) return res.json(err)
-        console.log("melee weapon added")
-        return res.json("melee weapon added")
-    })
-}
+//     const chMelee = "INSERT INTO db.melee_weapon (`WeaponID`, `AttackSpeed`) VALUES (?)"
+//     const values = [
+//         req.body.WeaponID,
+//         req.body.AttackSpeed
+//     ]
+
+//     db.query(chMelee, [values], (err, data) => {
+//         if (err) return res.json(err)
+//         console.log("melee weapon added")
+//         return res.json("melee weapon added")
+//     })
+// }
 
 /*
 Authorize admin login

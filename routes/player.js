@@ -7,7 +7,9 @@ import {
     getPlayerName,
     getPlayerInfo,
     equipArmour,
+    unequipArmour,
     wieldWeapon,
+    unwieldWeapon,
     playerConsumes,
     buyItem,
     canPlayerAffordThis,
@@ -48,7 +50,9 @@ router.get("/canPlayerEquip", canPlayerEquip)
 router.get("/canPlayerWield", canPlayerWield)
 
 router.put("/equipArmour/:id", equipArmour)
+router.put("/unequipArmour/:id", unequipArmour)
 router.put("/wieldWeapon", wieldWeapon)
+router.put("/unwieldWeapon", unwieldWeapon)
 router.put("/playerConsumes", playerConsumes)
 router.put("/buyItem/:id", buyItem)
 // instance functions to create instances of items bought by player

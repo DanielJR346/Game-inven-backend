@@ -14,10 +14,10 @@ import {
     changeAttributes,
     login,
     getAdminLogin,
-    changeItemWeapon,
-    changeMagic,
-    changeMelee,
-    changeRanged,
+    // changeItemWeapon,
+    // changeMagic,
+    // changeMelee,
+    // changeRanged,
     createEquippable,
     createArmour,
     createWeapon,
@@ -41,7 +41,7 @@ router.put("/addItem", addItem)
 router.put("/addOffer", addOffer)
 router.put("/changeAttributes", changeAttributes)
 router.put("/login", login)
-router.put("/changeItemWeapon", changeItemWeapon)
+// router.put("/changeItemWeapon", changeItemWeapon)
 
 router.post("/createItem/", createItem)
 router.post("/createEquippable", createEquippable) // Requires createItem
@@ -51,7 +51,7 @@ router.post("/createMeleeWeapon/", createMeleeWeapon) // Requires createWeapo
 router.post("/createRangedWeapon/", createRangedWeapon) // Requires createWeapo
 router.post("/createMagicWeapon/", createMagicWeapon) // Requires createWeapon
 router.post("/createConsumable", createConsumable) // Requires createItem
-router.post("/changeMagic", changeMagic)
-router.post("/changeMelee", changeMelee)
-router.post("/changeRanged", changeRanged)
+// router.post("/changeMagic", changeMagic)
+// router.post("/changeMelee", changeMelee)
+// router.post("/changeRanged", changeRanged)
 export default router
