@@ -21,7 +21,9 @@ import {
     createEquippable,
     createArmour,
     createWeapon,
-    createConsumable
+    createConsumable,
+    isPlayerValid,
+    isVendorValid
 } from "../controllers/admin.js"
 
 const router = express.Router()
@@ -30,6 +32,8 @@ router.get("/getAdminInfo/:id", getAdminInfo)
 router.get("/getAdminLogin/:id", getAdminLogin)
 router.get("/allItems/", allItems)
 router.get("/getVendorOffers", getVendorOffers)
+router.get("/isPlayerValid", isPlayerValid)
+router.get("/isVendorValid", isVendorValid)
 
 router.put("/removeOffer", removeOffer)
 router.put("/removePlayerItem", removePlayerItem)

@@ -410,3 +410,33 @@ export const login = (req,res) => {
         return res.json("User authenticated!")
     })
 }
+
+/*
+Check if a playerID is valid
+INPUT:
+    req.body:
+        UserID
+*/
+export const isPlayerValid = (req,res) => {
+    const isValid = "SELECT * FROM db.player p WHERE p.UserID = ?"
+    db.query(isValid, [req.body.UserID], (err,data)=>{
+        if(err) return res.json(err)
+        if(data.length == 0) return res.json("Player doesn't exist!")
+        return res.json("valid player ID")
+    })
+}
+
+/*
+Check if a playerID is valid
+INPUT:
+    req.body:
+        VendorID
+*/
+export const isVendorValid = (req,res) => {
+    const isValid = "SELECT * FROM db.vendor v WHERE v.VendorID = ?"
+    db.query(isValid, [req.body.VendorID], (err,data)=>{
+        if(err) return res.json(err)
+        if(data.length == 0) return res.json("Vendor doesn't exist!")
+        return res.json("valid vendor ID")
+    })
+}
