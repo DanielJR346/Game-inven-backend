@@ -128,34 +128,147 @@ Does not utilize #ofUses
 INPUT:
     req.body:
         PlayerID
-        ConsumableID
+        ItemID
 */
 export const playerConsumes = (req,res) => {
+
     // Player first consumes the potion
-    const consume = "INSERT INTO db.player_consumes_consumable (`ConsumableID`, `PlayerConsumedID`) VALUES (?)"
-    const values = [req.body.ConsumableID, req.body.PlayerID]
+    const consume = "INSERT INTO db.player_consumes_consumable (`ItemID`, `PlayerConsumedID`) VALUES (?)"
+    const values = [req.body.ItemID, req.body.PlayerID]
     db.query(consume, [values], (err,data)=>{
         if(err) return res.json(err)
         console.log("consumable consumed")
         // return res.json("consumable consumed!")
     })
 
-    // Decrement the quantity of that potion
-    const decrementQuant = "UPDATE db.consumable c SET c.Quantity = c.Quantity -1 WHERE c.ItemID = ?"
-    db.query(decrementQuant, [req.body.ConsumableID], (err,data)=>{
+    // Decrement CurrentUsesLeft by 1
+    const decrementUses = "UPDATE db.consumable c SET c.CurrentUsesLeft = c.CurrentUsesLeft -1 WHERE c.ItemID = ?"
+    db.query(decrementUses, [req.body.ItemID], (err,data)=>{
         if(err) return res.json(err)
-        console.log("quantity decreased")
-        // return res.json("quantity decremented!")
+        console.log("current uses left decreased")
+        // return res.json("current uses left decremented!")
     })
 
-    // Remove any potions from players inventory that have 0 quantity left
-    const checkQuant = "UPDATE db.item i INNER JOIN db.consumable c ON i.ItemID = c.ItemID SET i.PlayerStoredID = NULL WHERE c.Quantity = 0"
+    // Decrement Quantity by 1 if CurrentUsesLeft == 0, then reset 
+    const decrementQuantity = "UPDATE db.consumable c SET c.Quantity = c.Quantity -1, c.CurrentUsesLeft = c.Uses WHERE c.ItemID = ? AND c.CurrentUsesLeft = 0"
+    db.query(decrementQuantity, [req.body.ItemID], (err,data)=>{
+        if(err) return res.json(err)
+        console.log("decremented quantity")
+        // return res.json("decremented quantity")
+    })
+
+    // Remove any potions from players inventory that have 0 quantity and currentUsesLeft == Uses
+    const checkQuant = "UPDATE db.item i INNER JOIN db.consumable c ON i.ItemID = c.ItemID SET i.PlayerStoredID = NULL WHERE c.Quantity = 0 AND c.CurrentUsesLeft = c.Uses"
     db.query(checkQuant, (err,data)=>{
         if(err) return res.json(err)
         console.log("removed empty consumables!")
-        return res.json("removed empty consumables!")
+        return res.json("consumable consumed!")
+    })
+
+}
+
+/*
+Checks if a player can afford to purchase an item
+INPUT:
+    req.body:
+        ItemID
+        VendorID
+        UserID
+*/
+export const canPlayerAffordThis = (req,res) => {
+    // Should check that the player has enough money to make the purcahse,
+    // Get Price of item
+    const getPrice = "SELECT @price, @price := v.Price FROM vendor_sells_item v WHERE v.ItemID = ? AND v.VendorID = ?"
+    db.query(getPrice, [req.body.ItemID,req.body.VendorID], (err,data)=>{
+        if(err) return res.json(err)
+        console.log("got price")
+        // console.log(data)
+        // return res.json(data)
+    })
+
+    // Get Money of player
+    const getMoney = "SELECT @money, @price, @money := p.Money FROM player p WHERE p.UserID = ?"
+    db.query(getMoney, [req.body.UserID], (err,data)=>{
+        if(err) return res.json(err)
+        console.log("got money")
+        // console.log(data)
+        // return res.json(data)
+    })
+
+    // Check if the player can afford the item
+    // If (data.length == 0) player cant afford the item
+    // Else player can afford it
+    const moneyCheck = "SELECT * FROM db.player WHERE @price <= @money"
+    db.query(moneyCheck, (err,data)=>{
+        if (err) return res.json(err)
+        if (data.length == 0) res.json("You can't afford this item!")
+        else res.json("You can buy this item")
     })
 }
+
+/*
+Check if the player can carry the item in their inventory after purchasing
+Only needed for equippable items
+INPUT:
+    req.body:
+        ItemID
+        VendorID
+        UserID
+*/
+export const canPlayerCarryThis =(req,res) => {
+    // Get weight of the item
+    const itemWeight = "SELECT @itemWeight, @itemWeight := e.Weight FROM db.item i, db.equippable e WHERE i.ItemID = e.ItemID AND i.ItemID = ?"
+    db.query(itemWeight, [req.body.ItemID], (err,data)=> {
+        if (err) return res.json(err)
+        // return res.json(data)
+    })
+
+    // Get weight that the player is carrying IF they are holding the item
+    const getPlayerCarry = "SELECT @itemWeight,@playerWeight, @playerWeight := SUM(e.Weight) + @itemWeight FROM db.item i, db.equippable e WHERE i.PlayerStoredID = ? AND i.ItemID = e.ItemID"
+    db.query(getPlayerCarry, [req.body.UserID], (err,data)=> {
+        if (err) return res.json(err)
+        console.log(data)
+        // return res.json(data)
+    })
+
+    // Check if @itemWeight + @weight < players carryWeight
+    // const weightCheck = "SELECT * FROM db.player p WHERE @itemWeight + @weight <= p.carryWeight AND p.UserID = ?"
+    const weightCheck = "SELECT * FROM db.player p WHERE p.UserID = ? AND @playerWeight <= p.carryWeight"
+    db.query(weightCheck, [req.body.UserID], (err,data)=> {
+        if (err) return res.json(err)
+        if (data.length == 0) return res.json("Player can't carry this")
+        else return res.json("Player can carry this!")
+    })
+
+}
+
+/*
+Check if a player has enough inventory space to hold a purchased item
+INPUT:
+    req.body:
+        ItemID
+        VendorID
+        UserID
+*/
+export const checkInvenCapacity = (req,res) => {
+    // Get current item count in players inventory
+    const itemCount = "SELECT @count, @count := COUNT(i.ItemID) FROM db.item i WHERE i.PlayerStoredID = ?"
+    db.query(itemCount, [req.body.UserID], (err,data)=> {
+        if (err) return res.json(err)
+        console.log(data)
+        // return res.json(data)
+    })
+
+    // Check if player can hold another item in their inventory
+    const itemCheck = "SELECT * FROM db.player p WHERE p.UserID = ? AND @count + 1 <= p.InvCapacity"
+    db.query(itemCheck, [req.body.UserID], (err,data)=> {
+        if (err) return res.json(err)
+        // console.log(data)
+        if (data.length == 0) return res.json("inventory full!")
+        return res.json("sufficient inventory space!")
+    })
+}
+
 
 /*
 Player buys an item
@@ -169,16 +282,10 @@ INPUT:
 export const buyItem = (req,res) => {
     const PlayerID = req.params.id;
 
-
-    const values = [
-        req.body.ItemID
-    ]
-
     // Should check that the player has enough money to make the purcahse,
     // Get Price of item
-    const getPrice = "SELECT @price, @price := v.Price FROM vendor_sells_item v WHERE v.ItemID =" + req.body.ItemID
-
-    db.query(getPrice, [values], (err,data)=>{
+    const getPrice = "SELECT @price, @price := v.Price FROM vendor_sells_item v WHERE v.ItemID = ? AND v.VendorID = ?"
+    db.query(getPrice, [req.body.ItemID,req.body.VendorID], (err,data)=>{
         if(err) return res.json(err)
         console.log("got price")
         console.log(data)
@@ -187,7 +294,6 @@ export const buyItem = (req,res) => {
 
     // Get Money of player
     const getMoney = "SELECT @money, @money := p.Money FROM player p WHERE p.UserID =" + req.params.id
-
     db.query(getMoney, [PlayerID], (err,data)=>{
         if(err) return res.json(err)
         console.log("got money")
@@ -196,27 +302,35 @@ export const buyItem = (req,res) => {
     })
 
     // Sanity check if @price and @money are correct
-    // const q = "SELECT @price, @money"
-    // db.query(q, (err,data) => {
-    //     if(err) return res.json(err)
-    //     console.log(data)
-    //     return res.json(data)
-    // })
-
-    // Only add purchase to player_buys_item if they have enough money
-    // const purchase = "INSERT INTO db.player_buys_item (`PlayerID`, `ItemID`) VALUES (?,?) WHERE @price < @money"
-    const purchase = "INSERT INTO db.player_buys_item (`PlayerID`, `ItemID`) SELECT ?,? FROM DUAL WHERE @price <= @money;"
-
-    const purchaseVal = [
-        req.body.ItemID
-    ]
-
-    db.query(purchase, [PlayerID,purchaseVal], (err,data)=>{
+    const q = "SELECT @price, @money"
+    db.query(q, (err,data) => {
         if(err) return res.json(err)
         console.log(data)
-        // TODO: STOP TRANSACTION IF THE PLAYER DOES NOT HAVE ENOUGH MONEY! (check if data.len == 0 maybe???)
         // return res.json(data)
     })
+
+    // !!!!!!!!!!!!!!!!!!!!! put this after instance of item is bought and use @newItemID
+    // // Only add purchase to player_buys_item if they have enough money
+    // // const purchase = "INSERT INTO db.player_buys_item (`PlayerID`, `ItemID`) VALUES (?,?) WHERE @price < @money"
+    // const purchase = "INSERT INTO db.player_buys_item (`PlayerID`, `ItemID`) SELECT ?,? FROM DUAL WHERE @price <= @money;"
+    // const purchaseVal = [
+    //     req.body.ItemID
+    // ]
+    // db.query(purchase, [PlayerID,purchaseVal], (err,data)=>{
+    //     if(err) return res.json(err)
+    //     console.log(data)
+    //     if (data.length == 0) return res.json("You don't have enough money!")
+    //     // return res.json(data)
+    // })
+
+    // Causes a server crash :(
+    // // Check if the player has enough money
+    // const moneyCheck = "SELECT * FROM db.player WHERE @price <= @money"
+    // db.query(moneyCheck, (err,data)=>{
+    //     if(err) return res.json(err)
+    //     console.log(data)
+    //     // if (data.length == 0) return res.json("You don't have enough money!")
+    // })
 
     // Complete the transaction
     // Now that the purchase is complete, decrement the price from the players money
@@ -224,36 +338,231 @@ export const buyItem = (req,res) => {
     // const decrementMoney = "UPDATE db.player p SET p.Money - @price WHERE p.UserID = ?"
     db.query(decrementMoney, [PlayerID], (err,data)=>{
         if(err) return res.json(err)
-        console.log(data)
+        console.log("money taken from player balance")
         // return res.json(data)
     })
 
     // Increment price into the vendor money
     const incrementVendorMoney = "UPDATE db.vendor v SET v.Money = v.Money + @price WHERE v.VendorID = ?"
-
     db.query(incrementVendorMoney, [req.body.VendorID], (err,data)=>{
         if(err) return res.json(err)
-        console.log(data)
+        console.log("money added to vendor balance")
+        // return res.json(data)
+    })
+    
+    // At this point the transaction is complete, now run one of the create instance functions to create an instance of the item (input ItemID of purchased item)
+    // First create the instance of the item:
+    // Get info of the item to use to make item instance
+    const getItemInfo = "SELECT @Description,@PlayerSellPrice, @Description := i.Description, @PlayerSellPrice := i.PlayerSellPrice FROM db.item i WHERE i.ItemID = ?"
+    db.query(getItemInfo, [req.body.ItemID], (err,data)=>{
+        if(err) return res.json(err)
+        console.log("got item info")
         // return res.json(data)
     })
 
-    // Add item to players inventory and remove it from the vendors inventory
-    // NOTE: does not make an instance of the item
-    const addPlayerInven = "UPDATE db.item i SET i.PlayerStoredID = ? WHERE i.ItemID = ?"
-    db.query(addPlayerInven, [req.params.id, req.body.ItemID], (err,data)=>{
+    // Create an instance of the item which will be owned by the inputted PlayerID
+    const instanceItem = "INSERT INTO item (`ItemID`, `Description`, `PlayerStoredID`, `PlayerSellPrice`) VALUES (NULL, @Description, ? ,@PlayerSellPrice)"
+    db.query(instanceItem, [PlayerID], (err,data)=>{
         if(err) return res.json(err)
-        console.log(data)
+        console.log("instanced item created!")
         // return res.json(data)
     })
 
-    const removeVendInven = "DELETE FROM db.vendor_sells_item v WHERE v.ItemID = ? and v.VendorID = ?"
-    db.query(removeVendInven, [req.body.ItemID, req.body.VendorID], (err,data)=>{
+    // Get new ItemId assigned to instanced item to be used to make instance of armour or weapons
+    // Get unique ItemID from database (should be the highest ItemID since it is the newest)
+    const getItemID = "SELECT @newItemID, @newItemID := i.ItemID FROM db.item i order by i.ItemID desc limit 1";
+    db.query(getItemID, (err,data)=>{
         if(err) return res.json(err)
-        console.log(data)
+        console.log("new ItemID assigned to @newItemID")
+        // return res.json(data)
+        // return res.json("Transaction completed")
+    })
+
+    // Add transaction to player_buys_item table
+    const transaction = "INSERT INTO db.player_buys_item (`PlayerID`, `ItemID`) VALUES (?, @newItemID)"
+    db.query(transaction, [PlayerID], (err,data)=>{
+        if(err) return res.json(err)
+        console.log("transaction recorded in player_buys_item")
+        // return res.json(data)
+        return res.json("Transaction completed")
+    })
+
+    // IMPORTANT: Now create the matching item type (ex. armour, weapons, melee weapons, etc.) to complete the fully created instance of the purchased item!
+}
+
+
+// Create instace functions (the appropriate one should be run for the type of item bought (ex. armour, melee weapon, etc.))
+// NOTE: for these to not crash, @newItemID variable must be set from /buyItem/ function above!
+/*
+Inputs for all instance functions:
+     req.body:
+         ItemID
+         PlayerID
+*/
+
+/*
+Create an instance of armour
+*/
+export const instanceArmour = (req,res) => {
+    // Get info of equippable and armour to make instance
+    const getItemInfo = "SELECT @Defense,@Type,@Weight, @Defense := a.Defense, @Type := a.Type, @Weight := e.Weight FROM db.armour a, db.equippable e WHERE a.ItemID = ? AND e.ItemID = ?"
+    db.query(getItemInfo, [req.body.ItemID, req.body.ItemID, req.body.ItemID], (err,data)=>{
+        if(err) return res.json(err)
+        console.log("Got item info")
+        // return res.json(data)
+    })
+
+    // Create the instance of an equippable
+    const instanceEquippable = "INSERT INTO equippable (`ItemID`, `Weight`) VALUES (@newItemID, @Weight)"
+    db.query(instanceEquippable, (err,data)=>{
+        if(err) return res.json(err)
+        console.log("equippable created!")
+        // return res.json(data)
+    })
+
+    // Create the instance of the armour
+    const instanceArmour = "INSERT INTO armour (`ItemID`, `Defense`, `Type`, `EquippedID`) VALUES (@newItemID, @Defense, @Type, NULL)"
+    db.query(instanceArmour, (err,data)=>{
+        if(err) return res.json(err)
+        console.log("armour created!")
+        return res.json("instance of armour created!")
+    })
+
+}
+
+/*
+Create an instance of MELEE weapon
+*/
+export const instanceMeleeWeapon = (req,res) => {
+    // Get info on weapon and melee_weapon to create instance
+    const getItemInfo = "SELECT @AttackPower, @Weight, @AttackSpeed, @AttackPower := w.AttackPower, @Weight := e.Weight, @AttackSpeed := m.AttackSpeed FROM db.weapon w, db.melee_weapon m, db.equippable e WHERE m.WeaponID = ? AND w.ItemID = ? AND e.ItemID = ?"
+    db.query(getItemInfo, [req.body.ItemID,req.body.ItemID,req.body.ItemID], (err,data)=>{
+        if(err) return res.json(err)
+        console.log("Got item info")
+        // return res.json(data)
+    })
+
+    // Create the instance of an equippable
+    const instanceEquippable = "INSERT INTO equippable (`ItemID`, `Weight`) VALUES (@newItemID, @Weight)"
+    db.query(instanceEquippable, (err,data)=>{
+        if(err) return res.json(err)
+        console.log("equippable created!")
+        // return res.json(data)
+    })
+
+    // Create instance of weapon
+    const instanceWeapon = "INSERT INTO weapon (`ItemID`, `AttackPower`, `PlayerWieldID`) VALUES (@newItemID, @AttackPower, NULL)"
+    db.query(instanceWeapon, (err,data)=>{
+        if(err) return res.json(err)
+        console.log("created weapon instance")
+        // return res.json(data)
+    })
+
+    // Create instance of melee weapon
+    const instanceMeleeWeapon = "INSERT INTO melee_weapon (`WeaponID`, `AttackSpeed`) VALUES (@newItemID, @AttackSpeed)"
+    db.query(instanceMeleeWeapon, (err,data)=>{
+        if(err) return res.json(err)
+        console.log("created melee_weapon instance")
         return res.json(data)
     })
 }
 
+/*
+Create an instance of RANGED weapon
+*/
+export const instanceRangedWeapon = (req,res) => {
+    // Get info on weapon and melee_weapon to create instance
+    const getItemInfo = "SELECT @AttackPower, @Weight, @DrawSpeed, @AttackPower := w.AttackPower, @Weight := e.Weight, @DrawSpeed := r.DrawSpeed FROM db.weapon w, db.ranged_weapon r, db.equippable e WHERE r.WeaponID = ? AND w.ItemID = ? AND e.ItemID = ?"
+    db.query(getItemInfo, [req.body.ItemID,req.body.ItemID,req.body.ItemID], (err,data)=>{
+        if(err) return res.json(err)
+        console.log("Got item info")
+        // return res.json(data)
+    })
+
+    // Create the instance of an equippable
+    const instanceEquippable = "INSERT INTO equippable (`ItemID`, `Weight`) VALUES (@newItemID, @Weight)"
+    db.query(instanceEquippable, (err,data)=>{
+        if(err) return res.json(err)
+        console.log("equippable created!")
+        // return res.json(data)
+    })
+
+    // Create instance of weapon
+    const instanceWeapon = "INSERT INTO weapon (`ItemID`, `AttackPower`, `PlayerWieldID`) VALUES (@newItemID, @AttackPower, NULL)"
+    db.query(instanceWeapon, (err,data)=>{
+        if(err) return res.json(err)
+        console.log("created weapon instance")
+        // return res.json(data)
+    })
+
+    // Create instance of ranged weapon
+    const instanceMeleeWeapon = "INSERT INTO ranged_weapon (`WeaponID`, `DrawSpeed`) VALUES (@newItemID, @DrawSpeed)"
+    db.query(instanceMeleeWeapon, (err,data)=>{
+        if(err) return res.json(err)
+        console.log("created ranged_weapon instance")
+        return res.json(data)
+    })
+}
+
+/*
+Create an instance of Magic weapon
+*/
+export const instanceMagicWeapon = (req,res) => {
+    // Get info on weapon and melee_weapon to create instance
+    const getItemInfo = "SELECT @AttackPower, @Weight, @ManaCost, @AttackPower := w.AttackPower, @Weight := e.Weight, @ManaCost := r.ManaCost FROM db.weapon w, db.magic_weapon r, db.equippable e WHERE r.WeaponID = ? AND w.ItemID = ? AND e.ItemID = ?"
+    db.query(getItemInfo, [req.body.ItemID,req.body.ItemID,req.body.ItemID], (err,data)=>{
+        if(err) return res.json(err)
+        console.log("Got item info")
+        // return res.json(data)
+    })
+
+    // Create the instance of an equippable
+    const instanceEquippable = "INSERT INTO equippable (`ItemID`, `Weight`) VALUES (@newItemID, @Weight)"
+    db.query(instanceEquippable, (err,data)=>{
+        if(err) return res.json(err)
+        console.log("equippable created!")
+        // return res.json(data)
+    })
+
+    // Create instance of weapon
+    const instanceWeapon = "INSERT INTO weapon (`ItemID`, `AttackPower`, `PlayerWieldID`) VALUES (@newItemID, @AttackPower, NULL)"
+    db.query(instanceWeapon, (err,data)=>{
+        if(err) return res.json(err)
+        console.log("created weapon instance")
+        // return res.json(data)
+    })
+
+    // Create instance of ranged weapon
+    const instanceMeleeWeapon = "INSERT INTO magic_weapon (`WeaponID`, `ManaCost`) VALUES (@newItemID, @ManaCost)"
+    db.query(instanceMeleeWeapon, (err,data)=>{
+        if(err) return res.json(err)
+        console.log("created magic_weapon instance")
+        return res.json(data)
+    })
+}
+
+/*
+Create instance of consumable
+*/
+export const instanceConsumable = (req,res) => {
+    
+    // Get consumable info
+    const getItemInfo = "SELECT @Effect, @Quantity, @Uses, @Effect := c.Effect, @Quantity := c.Quantity, @Uses := c.Uses FROM db.consumable c WHERE c.ItemID = ?"
+    db.query(getItemInfo, [req.body.ItemID], (err,data)=>{
+        if(err) return res.json(err)
+        console.log("Got item info")
+        // return res.json(data)
+    })
+
+    // Create instance of consumable
+    const instanceConsumable = "INSERT INTO consumable (`ItemID`, `Effect`, `Quantity`, `Uses`, `CurrentUsesLeft`) VALUES (@newItemID, @Effect, @Quantity, @Uses, @Uses)"
+    db.query(instanceConsumable, (err,data)=>{
+        if(err) return res.json(err)
+        console.log("created magic_weapon instance")
+        return res.json(data)
+    })
+
+}
 
 /*
 Player sells an item to a vendor, the vendor can now sell that item (maybe for more than they bought it)
@@ -322,14 +631,14 @@ export const sellItem = (req,res) => {
         // return res.json(data)
     })
 
-    // Switch item ownership
-    // Add item to the vendors offers
-    const vendorNewOffer = "INSERT INTO db.vendor_sells_item (`VendorID`, `ItemID`, `Price`) VALUES (?, ?, @sellPrice * 1.1)"
-    db.query(vendorNewOffer, [req.body.VendorID, req.body.ItemID], (err,data)=>{
-        if(err) return res.json(err)
-        console.log(data)
-        // return res.json(data)
-    })
+    // // Switch item ownership
+    // // Add item to the vendors offers
+    // const vendorNewOffer = "INSERT INTO db.vendor_sells_item (`VendorID`, `ItemID`, `Price`) VALUES (?, ?, @sellPrice * 1.1)"
+    // db.query(vendorNewOffer, [req.body.VendorID, req.body.ItemID], (err,data)=>{
+    //     if(err) return res.json(err)
+    //     console.log(data)
+    //     // return res.json(data)
+    // })
 
     // Remove players ownership over item
     const removePlayerOwn = "UPDATE db.item i SET i.PlayerStoredID = NULL WHERE i.ItemID = ?"
@@ -377,5 +686,32 @@ export const login = (req,res) => {
         if(err) return res.json(err)
         if(data.length == 0) return res.status(404).json("Password is incorrect or user does not exist!")
         return res.json("User authenticated!")
+    })
+}
+
+/*
+Returns the ID of the player or user that has been authorized with correct login information
+Player version and Admin version
+INPUT:
+    req.body:
+        Username
+        Password
+*/
+export const loginAuthorizedP = (req,res) => {
+    // Get ID of player
+    const player = "SELECT p.UserID FROM db.user u, db.player p WHERE u.UserID = p.UserID AND u.Username = ? AND u.Password = ?"
+    db.query(player, [req.body.Username, req.body.Password], (err,data)=>{
+        if(err) return res.json(err)
+        // if(data.length == 0) return res.status(404).json("Password is incorrect or user does not exist!")
+        return res.json(data)
+    })
+}
+export const loginAuthorizedA = (req,res) => {
+    // Get ID of player
+    const admin = "SELECT a.AdminID FROM db.user u, db.admin a WHERE u.UserID = a.UserID AND u.Username = ? AND u.Password = ?"
+    db.query(admin, [req.body.Username, req.body.Password], (err,data)=>{
+        if(err) return res.json(err)
+        // if(data.length == 0) return res.status(404).json("Password is incorrect or user does not exist!")
+        return res.json(data)
     })
 }

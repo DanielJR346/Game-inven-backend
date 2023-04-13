@@ -89,170 +89,154 @@ export const removePlayerItem = (req,res) => {
 
 /*
  Admin creates item
+ INPUT:
+    req.body:
+        Description
+        PlayerStoredID
 */
 export const createItem = (req, res) => {
-    const q = "INSERT INTO item (`ItemID`, `Description`, `PlayerStoredID`) VALUES (?)";
-    const values = [
-        req.body.ItemID,
-        req.body.Description,
-        req.body.PlayerStoredID
-    ]
-
-    db.query(q, [values], (err, data) => {
+    // Create an item
+    const q = "INSERT INTO item (`ItemID`, `Description`, `PlayerStoredID`, `PlayerSellPrice`) VALUES (NULL, ?, ?, ?)";
+    db.query(q, [req.body.Description, req.body.PlayerStoredID], (err, data) => {
         if (err) return res.json(err)
         console.log("item created!")
-        return res.json("item created!")
+        // return res.json("item created!")
     })
+    
+    // Store the ID of the newly created item into @ID variable
+    const getItemID = "SELECT @ID, @ID := i.ItemID FROM db.item i order by i.ItemID desc limit 1";
+    db.query(getItemID, (err,data)=>{
+        if(err) return res.json(err)
+        console.log("new ItemID assigned to @ID")
+        return res.json(data)
+    })
+
+    // @ID can be used to further continue specific item creation
 }
 
 /*
- Create Melee Weapon
+Create equippable (for weapons and armour)
+REQUIRES createItem to be used first to assign a value to @ID
+INPUT:
+    req.body:
+        Weight
 */
-export const createMeleeWeapon = (req, res) => {
-    // First create the item with an autoincremented ItemID
-    const q1 = "INSERT INTO item (`ItemID`, `Description`, `PlayerStoredID`) VALUES (?)";
-    const values1 = [
-        req.body.ItemID,
-        req.body.Description,
-        req.body.PlayerStoredID
-    ]
-
-    db.query(q1, [values1], (err, data) => {
-        if (err) return res.json(err)
-        // return res.json("item created!")
-        console.log("item created!")
-        // res.json("item created")
-    })
-
-    // Now create the weapon
-    const q2 = "INSERT INTO weapon (`ItemID`, `AttackPower`, `PlayerWieldID`) VALUES (?)";
-    const values2 = [
-        req.body.WeaponID,
-        req.body.AttackPower,
-        req.body.PlayerWieldID
-    ]
-
-    db.query(q2, [values2], (err, data) => {
-        if (err) return res.json(err)
-        // return res.json("weapon created!")
-        console.log("weapon created!")
-        // res.json("weapon created!")
-
-    })
-
-    // Now create the melee weapon
-    const q3 = "INSERT INTO melee_weapon (`WeaponID`, `AttackSpeed`) VALUES (?)";
-    const values3 = [
-        req.body.WeaponID,
-        req.body.AttackSpeed
-    ]
-
-    db.query(q3, [values3], (err, data) => {
-        if (err) return res.json(err)
-        console.log("melee weapon created!")
-        return res.json("melee weapon created!")
-    })
-
-}
-
-/*
- Create Ranged Weapon 
- */
-export const createRangedWeapon = (req, res) => {
-    // First create the item with an autoincremented ItemID
-    const q1 = "INSERT INTO item (`ItemID`, `Description`, `PlayerStoredID`) VALUES (?)";
-    const values1 = [
-        req.body.ItemID,
-        req.body.Description,
-        req.body.PlayerStoredID,
-    ]
-
-    db.query(q1, [values1], (err, data) => {
-        if (err) return res.json(err)
-        // return res.json("item created!")
-        console.log("item created!")
-        // res.json("item created")
-    })
-
-    // Now create the weapon
-    const q2 = "INSERT INTO weapon (`ItemID`, `AttackPower`, `PlayerWieldID`) VALUES (?)";
-    const values2 = [
-        req.body.WeaponID,
-        req.body.AttackPower,
-        req.body.PlayerWieldID
-    ]
-
-    db.query(q2, [values2], (err, data) => {
-        if (err) return res.json(err)
-        // return res.json("weapon created!")
-        console.log("weapon created!")
-        // res.json("weapon created!")
-
-    })
-
-    // Now create the melee weapon
-    const q3 = "INSERT INTO ranged_weapon (`WeaponID`, `DrawSpeed`) VALUES (?)";
-    const values3 = [
-        req.body.WeaponID,
-        req.body.DrawSpeed
-    ]
-
-    db.query(q3, [values3], (err, data) => {
-        if (err) return res.json(err)
-        console.log("ranged weapon created!")
-        return res.json("ranged weapon created!")
+export const createEquippable = (req,res) => {
+    // Create Equippable
+    const createEquippable = "INSERT INTO equippable (`ItemID`, `Weight`) VALUES (@ID, ?)"
+    db.query(createEquippable, [req.body.Weight], (err,data)=>{
+        if(err) return res.json(err)
+        console.log("created new equippable")
+        return res.json(data)
     })
 }
 
 /*
- Create Magic Weapon
- */
-export const createMagicWeapon = (req, res) => {
-    // First create the item with an autoincremented ItemID
-    const q1 = "INSERT INTO item (`ItemID`, `Description`, `PlayerStoredID`, `Name`) VALUES (?)";
-    const values1 = [
-        req.body.ItemID,
-        req.body.Description,
-        req.body.PlayerStoredID,
-        req.body.Name
-    ]
-
-    db.query(q1, [values1], (err, data) => {
-        if (err) return res.json(err)
-        // return res.json("item created!")
-        console.log("item created!")
-        // res.json("item created")
-    })
-
-    // Now create the weapon
-    const q2 = "INSERT INTO weapon (`ItemID`, `AttackPower`, `PlayerWieldID`) VALUES (?)";
-    const values2 = [
-        req.body.WeaponID,
-        req.body.AttackPower,
-        req.body.PlayerWieldID
-    ]
-
-    db.query(q2, [values2], (err, data) => {
-        if (err) return res.json(err)
-        // return res.json("weapon created!")
-        console.log("weapon created!")
-        // res.json("weapon created!")
-
-    })
-
-    // Now create the magic weapon
-    const q3 = "INSERT INTO magic_weapon (`WeaponID`, `ManaCost`) VALUES (?)";
-    const values3 = [
-        req.body.WeaponID,
-        req.body.ManaCost
-    ]
-
-    db.query(q3, [values3], (err, data) => {
-        if (err) return res.json(err)
-        console.log("magic weapon created!")
-        return res.json("magic weapon created!")
+Create armour
+REQUIRES createEquippable to be used first
+INPUT:
+    req.body:
+        Defense
+        Type
+*/
+export const createArmour = (req,res) => {
+    // Create armour
+    const createArmour = "INSERT INTO armour (`ItemID`, `Defense`, `Type`, `EquippedID`) VALUES (@ID, ?, ?, NULL)"
+    db.query(createArmour, [req.body.Defense, req.body.Type], (err,data)=>{
+        if(err) return res.json(err)
+        console.log("created new armour")
+        return res.json(data)
     })
 }
+
+/*
+Create weapon
+REQUIRES createEquippable to be used first
+INPUT:
+    req.body:
+        AttackPower
+*/
+export const createWeapon = (req,res) => {
+    // Create weapon
+    const createWeapon = "INSERT INTO weapon (`ItemID`, `AttackPower`, `PlayerWieldID`) VALUES (@ID, ?, NULL)"
+    db.query(createWeapon, [req.body.AttackPower], (err,data)=>{
+        if(err) return res.json(err)
+        console.log("created new weapon")
+        return res.json(data)
+    })
+}
+
+/*
+Create melee weapon
+REQUIRES createWeapon to be used first
+INPUT:
+    req.body:
+        AttackSpeed
+*/
+export const createMeleeWeapon = (req,res) => {
+    // Create melee weapon
+    const createMeleeWeapon = "INSERT INTO melee_weapon (`WeaponID`, `AttackSpeed`) VALUES (@ID, ?)"
+    db.query(createMeleeWeapon, [req.body.AttackSpeed], (err,data)=>{
+        if(err) return res.json(err)
+        console.log("created new melee_weapon")
+        return res.json("created new melee_weapon")
+    })
+}
+
+/*
+Create melee weapon
+REQUIRES createWeapon to be used first
+INPUT:
+    req.body:
+        DrawSpeed
+*/
+export const createRangedWeapon = (req,res) => {
+    // Create melee weapon
+    const createRangedWeapon = "INSERT INTO ranged_weapon (`WeaponID`, `DrawSpeed`) VALUES (@ID, ?)"
+    db.query(createRangedWeapon, [req.body.DrawSpeed], (err,data)=>{
+        if(err) return res.json(err)
+        console.log("created new ranged_weapon")
+        return res.json("created new ranged_weapon")
+    })
+}
+
+/*
+Create magic weapon
+REQUIRES createWeapon to be used first
+INPUT:
+    req.body:
+        DrawSpeed
+*/
+export const createMagicWeapon = (req,res) => {
+    // Create melee weapon
+    const createMagicWeapon = "INSERT INTO magic_weapon (`WeaponID`, `ManaCost`) VALUES (@ID, ?)"
+    db.query(createMagicWeapon, [req.body.ManaCost], (err,data)=>{
+        if(err) return res.json(err)
+        console.log("created new magic_weapon")
+        return res.json("created new magic weapon")
+    })
+}
+
+/*
+Create consumable
+REQUIRES createItem to be used first
+INPUT:
+    req.body:
+        Effect
+        Quantity
+        Uses
+*/
+export const createConsumable = (req,res) => {
+    // Create consumable
+    const createConsumable = "INSERT INTO consumable (`ItemID`, `Effect`, `Quantity`, `Uses`, `CurrentUsesLeft`) VALUES (@ID, ?, ?, ?, ?)"
+    db.query(createConsumable, [req.body.Effect, req.body.Quantity, req.body.Uses, req.body.Uses], (err,data)=>{
+        if(err) return res.json(err)
+        console.log("created consumable")
+        return res.json("created consumable")
+    })
+}
+
+
 
 /*
 Adds an EXISTING item to a players inventory
@@ -424,5 +408,35 @@ export const login = (req,res) => {
         if(err) return res.json(err)
         if(data.length == 0) return res.status(404).json("Password is incorrect or user does not exist!")
         return res.json("User authenticated!")
+    })
+}
+
+/*
+Check if a playerID is valid
+INPUT:
+    req.body:
+        UserID
+*/
+export const isPlayerValid = (req,res) => {
+    const isValid = "SELECT * FROM db.player p WHERE p.UserID = ?"
+    db.query(isValid, [req.body.UserID], (err,data)=>{
+        if(err) return res.json(err)
+        if(data.length == 0) return res.json("Player doesn't exist!")
+        return res.json("valid player ID")
+    })
+}
+
+/*
+Check if a playerID is valid
+INPUT:
+    req.body:
+        VendorID
+*/
+export const isVendorValid = (req,res) => {
+    const isValid = "SELECT * FROM db.vendor v WHERE v.VendorID = ?"
+    db.query(isValid, [req.body.VendorID], (err,data)=>{
+        if(err) return res.json(err)
+        if(data.length == 0) return res.json("Vendor doesn't exist!")
+        return res.json("valid vendor ID")
     })
 }
