@@ -756,7 +756,7 @@ export const loginAuthorizedP = (req,res) => {
     })
 }
 export const loginAuthorizedA = (req,res) => {
-    // Get ID of player
+    // Get ID of admin
     const admin = "SELECT a.AdminID FROM db.user u, db.admin a WHERE u.UserID = a.UserID AND u.Username = ? AND u.Password = ?"
     db.query(admin, [req.body.Username, req.body.Password], (err,data)=>{
         if(err) return res.json(err)
@@ -806,4 +806,35 @@ export const canPlayerWield = (req,res) => {
         else return res.json("Player is already wielding a weapon")
     })
 
+}
+
+/*
+Functions that check if an item is a weapon, armour, or consumable
+INPUT:
+    req.body:
+        ItemID
+*/
+export const isConsumable = (req,res) => {
+    const check = "SELECT * FROM db.consumable x WHERE x.ItemID = ?"
+    db.query(check, [req.body.ItemID], (err,data)=> {
+        if (err) return res.json(err)
+        if (data.length == 0) return res.json("not consumable")
+        else return res.json(data)
+    })
+}
+export const isArmour = (req,res) => {
+    const check = "SELECT * FROM db.armour x WHERE x.ItemID = ?"
+    db.query(check, [req.body.ItemID], (err,data)=> {
+        if (err) return res.json(err)
+        if (data.length == 0) return res.json("not armour")
+        else return res.json(data)
+    })
+}
+export const isMelee = (req,res) => {
+    const check = "SELECT * FROM db.melee_weapon x WHERE x.WeaponID = ?"
+    db.query(check, [req.body.ItemID], (err,data)=> {
+        if (err) return res.json(err)
+        if (data.length == 0) return res.json("not melee weapon")
+        else return res.json(data)
+    })
 }

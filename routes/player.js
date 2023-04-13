@@ -28,7 +28,10 @@ import {
     instanceMagicWeapon,
     instanceConsumable,
     canPlayerEquip,
-    canPlayerWield
+    canPlayerWield,
+    isConsumable,
+    isArmour,
+    isMelee
 } from "../controllers/player.js"
 
 const router = express.Router()
@@ -48,6 +51,9 @@ router.get("/canPlayerCarryThis", canPlayerCarryThis)
 router.get("/checkInvenCapacity", checkInvenCapacity)
 router.get("/canPlayerEquip", canPlayerEquip)
 router.get("/canPlayerWield", canPlayerWield)
+router.get("/isConsumable", isConsumable)
+router.get("/isArmour", isArmour)
+router.get("/isMelee", isMelee)
 
 router.put("/equipArmour/:id", equipArmour)
 router.put("/unequipArmour/:id", unequipArmour)
