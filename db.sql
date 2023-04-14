@@ -40,7 +40,7 @@ CREATE TABLE `admin` (
 
 LOCK TABLES `admin` WRITE;
 /*!40000 ALTER TABLE `admin` DISABLE KEYS */;
-INSERT INTO `admin` VALUES (1,1);
+INSERT INTO `admin` VALUES (1,7),(2,4);
 /*!40000 ALTER TABLE `admin` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -55,8 +55,6 @@ CREATE TABLE `admin_can_edit_inv` (
   `AdminID` int NOT NULL,
   `PlayerID` int NOT NULL,
   PRIMARY KEY (`AdminID`,`PlayerID`),
-  UNIQUE KEY `AdminID_UNIQUE` (`AdminID`),
-  UNIQUE KEY `PlayerID_UNIQUE` (`PlayerID`),
   KEY `AdminEdits_idx` (`AdminID`),
   KEY `PlayedEdit_idx` (`PlayerID`),
   CONSTRAINT `AdminEdits` FOREIGN KEY (`AdminID`) REFERENCES `admin` (`AdminID`) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -70,6 +68,7 @@ CREATE TABLE `admin_can_edit_inv` (
 
 LOCK TABLES `admin_can_edit_inv` WRITE;
 /*!40000 ALTER TABLE `admin_can_edit_inv` DISABLE KEYS */;
+INSERT INTO `admin_can_edit_inv` VALUES (4,1),(4,2),(4,3),(7,1),(7,2),(7,3);
 /*!40000 ALTER TABLE `admin_can_edit_inv` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -83,10 +82,10 @@ DROP TABLE IF EXISTS `admin_set_attribute`;
 CREATE TABLE `admin_set_attribute` (
   `AdminID` int NOT NULL,
   `ItemID` int NOT NULL,
-  PRIMARY KEY (`ItemID`,`AdminID`),
-  UNIQUE KEY `AdminID_UNIQUE` (`AdminID`),
-  UNIQUE KEY `ItemID_UNIQUE` (`ItemID`),
-  CONSTRAINT `AdminSet` FOREIGN KEY (`AdminID`) REFERENCES `admin` (`AdminID`) ON DELETE CASCADE ON UPDATE CASCADE
+  PRIMARY KEY (`AdminID`,`ItemID`),
+  KEY `ItemID` (`ItemID`),
+  CONSTRAINT `AdminSet` FOREIGN KEY (`AdminID`) REFERENCES `admin` (`AdminID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `ItemID` FOREIGN KEY (`ItemID`) REFERENCES `item` (`ItemID`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='AdminID is a foreign key of admin.UserID, not admin.AdminID, I get some index errors from trying to set it to admin.AdminID so ill leave it like this for now';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -96,6 +95,7 @@ CREATE TABLE `admin_set_attribute` (
 
 LOCK TABLES `admin_set_attribute` WRITE;
 /*!40000 ALTER TABLE `admin_set_attribute` DISABLE KEYS */;
+INSERT INTO `admin_set_attribute` VALUES (7,1),(7,2),(7,3),(7,4),(7,5),(7,6),(7,7),(7,8),(7,9),(7,10),(7,11),(7,12),(4,13),(4,14),(4,15),(4,16),(4,17),(4,18),(4,19),(4,20),(4,21),(4,22),(4,23),(4,24);
 /*!40000 ALTER TABLE `admin_set_attribute` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -124,7 +124,7 @@ CREATE TABLE `armour` (
 
 LOCK TABLES `armour` WRITE;
 /*!40000 ALTER TABLE `armour` DISABLE KEYS */;
-INSERT INTO `armour` VALUES (1,123,'1',1),(2,124,'2',1),(140,123,'3',NULL),(148,123,'1',NULL),(149,123,'1',NULL),(150,123,'1',NULL),(151,123,'1',NULL),(165,123,'1',NULL);
+INSERT INTO `armour` VALUES (10,5,'helmet',NULL),(11,15,'chestplate',NULL),(12,9,'leggings',NULL),(13,4,'boots',NULL),(14,8,'helmet',NULL),(15,18,'chestplate',NULL),(16,12,'leggings',NULL),(17,7,'boots',NULL),(18,3,'helmet',NULL),(19,12,'chestplate',NULL),(20,8,'leggings',NULL),(21,2,'boots',NULL);
 /*!40000 ALTER TABLE `armour` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -152,7 +152,7 @@ CREATE TABLE `consumable` (
 
 LOCK TABLES `consumable` WRITE;
 /*!40000 ALTER TABLE `consumable` DISABLE KEYS */;
-INSERT INTO `consumable` VALUES (3,'assda',3,3,3),(12,'does nothing',0,3,3);
+INSERT INTO `consumable` VALUES (22,'Restores HP',5,3,2),(23,'Restores MP',10,5,3),(24,'Grants mystical effects',3,1,1);
 /*!40000 ALTER TABLE `consumable` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -177,7 +177,7 @@ CREATE TABLE `equippable` (
 
 LOCK TABLES `equippable` WRITE;
 /*!40000 ALTER TABLE `equippable` DISABLE KEYS */;
-INSERT INTO `equippable` VALUES (1,321),(2,123),(3,5),(5,13),(9,5),(147,321),(148,321),(149,321),(150,321),(151,321),(161,321),(162,321),(165,321),(177,13),(179,13),(181,5),(182,5),(183,5),(184,5),(188,5),(189,5);
+INSERT INTO `equippable` VALUES (1,15),(2,25),(3,13),(4,15),(5,30),(6,7),(7,28),(8,31),(9,23),(10,10),(11,20),(12,15),(13,5),(14,15),(15,25),(16,20),(17,10),(18,7),(19,18),(20,13),(21,6);
 /*!40000 ALTER TABLE `equippable` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -205,7 +205,7 @@ CREATE TABLE `item` (
 
 LOCK TABLES `item` WRITE;
 /*!40000 ALTER TABLE `item` DISABLE KEYS */;
-INSERT INTO `item` VALUES (1,'test instanceItem',3,123),(2,'test melee weapon',1,50),(3,'range weapon for testing',NULL,0),(4,'test melee weapon',1,0),(5,'test melee weapon',1,0),(6,'testing changeAttributes admin command',1,6969),(7,'test melee weapon final',2,0),(8,'test melee weapon final again',2,0),(9,'magic weapon for testing',2,0),(10,'test melee weapon final again with NULL playerWieldID',2,0),(11,'bruh moment',2,999),(12,'potion test item',NULL,0),(13,'test melee weapon final again with without inputting PlayerWieldID and ItemID',2,0),(14,'test melee weapon final again with without inputting PlayerWieldID and ItemID',2,0),(15,'test melee weapon final again with without inputting PlayerWieldID and ItemID',2,0),(16,'test melee weapon final again with without inputting PlayerWieldID and ItemID',2,0),(17,'test melee weapon final again with without inputting PlayerWieldID and ItemID',2,0),(18,'test melee weapon final again with without inputting PlayerWieldID and ItemID',2,0),(19,'test melee weapon final again with without inputting PlayerWieldID and ItemID',2,0),(20,'ples work',NULL,0),(23,'testing test2 function',1,0),(24,'testing test2 function',1,0),(25,'testing variable uses',NULL,1),(100,'testing if I can return the itemID',NULL,0),(101,'testing if I can return the itemID',NULL,0),(102,'testing if I can return the itemID',NULL,0),(103,'testing if I can return the itemID',NULL,0),(104,'testing if I can return the itemID',NULL,0),(105,'testing if I can return the itemID',NULL,0),(106,'testing if I can return the itemID',NULL,0),(107,'testing if I can return the itemID',NULL,0),(108,'testing if I can return the itemID',NULL,0),(109,'testing if I can return the itemID',NULL,0),(110,'testing if I can return the itemID',NULL,0),(111,'testing if this shows up on the table',NULL,0),(112,'testing if this shows up on the table',NULL,0),(113,'testing if I can return the itemID',NULL,0),(114,'testing if I can return the itemID',NULL,0),(115,'testing if I can return the itemID',NULL,0),(116,'testing if I can return the itemID',NULL,0),(117,'testing if I can return the itemID',NULL,0),(118,'testing if I can return the itemID, is this item showing up?',NULL,0),(119,'testing if I can return the itemID, is this item showing up?',NULL,0),(120,'testing if I can return the itemID, is this item showing up?',NULL,0),(121,'test melee weapon again',NULL,0),(122,'test melee weapon again',NULL,0),(123,'test melee weapon again',NULL,0),(124,'test melee weapon again',NULL,0),(125,'test melee weapon again',NULL,0),(126,'test melee weapon again',NULL,0),(127,'test melee weapon again',NULL,0),(128,'test melee weapon again',NULL,0),(129,'test melee weapon again',NULL,0),(130,'test melee weapon again',NULL,0),(131,'test melee weapon again',NULL,0),(132,'test melee weapon again',NULL,0),(133,'ples work',NULL,0),(134,'testing test2 function',NULL,0),(135,'bruh moment',1,NULL),(136,'test melee weapon',1,NULL),(137,'test melee weapon',1,NULL),(138,'test melee weapon',1,NULL),(139,'test melee weapon',1,NULL),(140,'test melee weapon',1,NULL),(141,'test melee weapon',1,NULL),(142,'test melee weapon',1,0),(143,'test melee weapon',1,0),(144,'test melee weapon',1,0),(145,'test melee weapon',1,0),(146,'test melee weapon',1,0),(147,'test melee weapon',1,0),(148,'test melee weapon',1,0),(149,'test melee weapon',1,0),(150,'test melee weapon',1,0),(151,'test melee weapon',1,0),(152,'test melee weapon',1,123),(153,'test instanceItem',1,123),(154,'test instanceItem',1,123),(155,'test instanceItem',1,123),(156,'test instanceItem',1,123),(157,'test instanceItem',1,123),(158,'test instanceItem',1,123),(159,'test instanceItem',1,123),(160,'test instanceItem',1,123),(161,'test instanceItem',1,123),(162,'test instanceItem',1,123),(163,'test instanceItem',1,123),(164,'test instanceItem',1,123),(165,'test instanceItem',1,123),(166,'test melee weapon',1,0),(167,'test melee weapon',1,0),(168,'range weapon for testing',1,0),(169,'range weapon for testing',1,0),(170,'range weapon for testing',1,0),(171,'range weapon for testing',1,0),(172,'test melee weapon',1,0),(173,'test melee weapon',1,0),(174,'test melee weapon',1,0),(175,'test melee weapon',1,0),(176,'test melee weapon',1,0),(177,'test melee weapon',1,0),(178,'test melee weapon',1,0),(179,'test melee weapon',1,0),(180,'range weapon for testing',1,0),(181,'range weapon for testing',1,0),(182,'magic weapon for testing',1,0),(183,'magic weapon for testing',1,0),(184,'magic weapon for testing',1,0),(185,'magic weapon for testing',1,0),(186,'magic weapon for testing',1,0),(187,'magic weapon for testing',1,0),(188,'magic weapon for testing',1,0),(189,'magic weapon for testing',1,0);
+INSERT INTO `item` VALUES (1,'Original Fire',3,0),(2,'Excalibur',4,0),(3,'Galatine',5,0),(4,'Khryselakatos',3,0),(5,'Yew Bow',4,0),(6,'Gandiva',5,0),(7,'Spellbinder',3,0),(8,'Twilight',4,0),(9,'Journey\'s End',5,0),(10,'Black Wolf Mask',3,0),(11,'Blaidd\'s Armour',4,0),(12,'Blaidd\'s Greaves',5,0),(13,'Blaidd\'s Boots',3,0),(14,'Haligtree Knight Helm',4,0),(15,'Haligtree Knight Armour',5,0),(16,'Haligtree Greaves',3,0),(17,'Haligtree Boots',4,0),(18,'Omen Helm',5,0),(19,'Omen Armour',3,0),(20,'Omen Greaves',4,0),(21,'Omen Boots',5,0),(22,'Flask of Crimson Tears',3,0),(23,'Flask of Cerulean Tears',4,0),(24,'Flask of Wondrous Physick',5,0);
 /*!40000 ALTER TABLE `item` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -230,7 +230,7 @@ CREATE TABLE `magic_weapon` (
 
 LOCK TABLES `magic_weapon` WRITE;
 /*!40000 ALTER TABLE `magic_weapon` DISABLE KEYS */;
-INSERT INTO `magic_weapon` VALUES (9,17),(188,17),(189,17);
+INSERT INTO `magic_weapon` VALUES (7,160),(8,90),(9,250);
 /*!40000 ALTER TABLE `magic_weapon` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -255,7 +255,7 @@ CREATE TABLE `melee_weapon` (
 
 LOCK TABLES `melee_weapon` WRITE;
 /*!40000 ALTER TABLE `melee_weapon` DISABLE KEYS */;
-INSERT INTO `melee_weapon` VALUES (5,2),(7,5),(8,5),(10,5),(167,2),(179,2);
+INSERT INTO `melee_weapon` VALUES (1,5),(2,8),(3,3);
 /*!40000 ALTER TABLE `melee_weapon` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -282,7 +282,7 @@ CREATE TABLE `player` (
 
 LOCK TABLES `player` WRITE;
 /*!40000 ALTER TABLE `player` DISABLE KEYS */;
-INSERT INTO `player` VALUES (1,9993,300,200),(2,10,300,200),(3,100,300,200);
+INSERT INTO `player` VALUES (3,1500,200,120),(4,2000,280,150),(5,1337,235,180);
 /*!40000 ALTER TABLE `player` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -309,7 +309,6 @@ CREATE TABLE `player_buys_item` (
 
 LOCK TABLES `player_buys_item` WRITE;
 /*!40000 ALTER TABLE `player_buys_item` DISABLE KEYS */;
-INSERT INTO `player_buys_item` VALUES (1,1),(1,2),(2,2),(1,157),(1,158),(1,159),(1,160),(1,161),(1,162),(1,163),(1,164),(1,165),(1,166),(1,167),(1,168),(1,169),(1,170),(1,171),(1,172),(1,173),(1,174),(1,175),(1,176),(1,177),(1,178),(1,179),(1,180),(1,181),(1,182),(1,183),(1,184),(1,185),(1,186),(1,187),(1,188),(1,189);
 /*!40000 ALTER TABLE `player_buys_item` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -336,7 +335,6 @@ CREATE TABLE `player_consumes_consumable` (
 
 LOCK TABLES `player_consumes_consumable` WRITE;
 /*!40000 ALTER TABLE `player_consumes_consumable` DISABLE KEYS */;
-INSERT INTO `player_consumes_consumable` VALUES (1,1),(3,1),(3,1),(3,1),(3,1),(NULL,1),(NULL,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(NULL,1),(NULL,1),(NULL,1),(NULL,1),(NULL,1),(NULL,1),(NULL,1),(NULL,1),(NULL,1),(NULL,1),(NULL,1),(NULL,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1),(12,1);
 /*!40000 ALTER TABLE `player_consumes_consumable` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -361,7 +359,7 @@ CREATE TABLE `ranged_weapon` (
 
 LOCK TABLES `ranged_weapon` WRITE;
 /*!40000 ALTER TABLE `ranged_weapon` DISABLE KEYS */;
-INSERT INTO `ranged_weapon` VALUES (3,234),(170,234),(181,234),(182,234),(183,234),(184,234);
+INSERT INTO `ranged_weapon` VALUES (4,3),(5,8),(6,5);
 /*!40000 ALTER TABLE `ranged_weapon` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -376,8 +374,6 @@ CREATE TABLE `set_vendor_offers` (
   `AdminID` int NOT NULL,
   `VendorID` int NOT NULL,
   PRIMARY KEY (`AdminID`,`VendorID`),
-  UNIQUE KEY `AdminID_UNIQUE` (`AdminID`),
-  UNIQUE KEY `VendorID_UNIQUE` (`VendorID`),
   KEY `VendorSet_idx` (`VendorID`),
   CONSTRAINT `AdminVendSer` FOREIGN KEY (`AdminID`) REFERENCES `admin` (`AdminID`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `VendorSet` FOREIGN KEY (`VendorID`) REFERENCES `vendor` (`VendorID`)
@@ -405,7 +401,7 @@ CREATE TABLE `user` (
   `Password` varchar(255) NOT NULL DEFAULT 'password',
   `Username` varchar(45) NOT NULL DEFAULT 'User',
   PRIMARY KEY (`UserID`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='all users deafult passwords is ''password''';
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='all users deafult passwords is ''password''';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -414,7 +410,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (1,'newPassword','testname'),(2,'password','User'),(3,'password','User'),(4,'newPasswordButForUser4','User');
+INSERT INTO `user` VALUES (1,'Admin1','Alpha'),(2,'Admin2','Gamma'),(3,'Player1','Beta'),(4,'Player2','Delta'),(5,'Player3','Charlie');
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -429,7 +425,7 @@ CREATE TABLE `vendor` (
   `VendorID` int NOT NULL AUTO_INCREMENT,
   `Money` int NOT NULL DEFAULT '0',
   PRIMARY KEY (`VendorID`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -438,7 +434,7 @@ CREATE TABLE `vendor` (
 
 LOCK TABLES `vendor` WRITE;
 /*!40000 ALTER TABLE `vendor` DISABLE KEYS */;
-INSERT INTO `vendor` VALUES (1,2464);
+INSERT INTO `vendor` VALUES (1,20000),(2,15000),(3,1250);
 /*!40000 ALTER TABLE `vendor` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -465,7 +461,6 @@ CREATE TABLE `vendor_buys_item` (
 
 LOCK TABLES `vendor_buys_item` WRITE;
 /*!40000 ALTER TABLE `vendor_buys_item` DISABLE KEYS */;
-INSERT INTO `vendor_buys_item` VALUES (1,2);
 /*!40000 ALTER TABLE `vendor_buys_item` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -493,7 +488,7 @@ CREATE TABLE `vendor_sells_item` (
 
 LOCK TABLES `vendor_sells_item` WRITE;
 /*!40000 ALTER TABLE `vendor_sells_item` DISABLE KEYS */;
-INSERT INTO `vendor_sells_item` VALUES (1,1,50),(1,3,35),(1,5,50),(1,6,169),(1,9,1),(2,1,123);
+INSERT INTO `vendor_sells_item` VALUES (1,1,34),(1,2,443),(1,3,52),(1,4,254),(1,5,67),(1,6,23),(1,7,75),(1,8,56),(2,9,43),(2,10,76),(2,11,23),(2,12,73),(2,13,65),(2,14,35),(2,15,98),(2,16,33),(3,17,23),(3,18,45),(3,19,67),(3,20,56),(3,21,76),(3,22,45),(3,23,65),(3,24,32);
 /*!40000 ALTER TABLE `vendor_sells_item` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -521,7 +516,6 @@ CREATE TABLE `weapon` (
 
 LOCK TABLES `weapon` WRITE;
 /*!40000 ALTER TABLE `weapon` DISABLE KEYS */;
-INSERT INTO `weapon` VALUES (3,109,NULL),(5,69,1),(6,69,1),(7,69,2),(8,69,2),(10,69,NULL),(166,69,NULL),(167,69,NULL),(169,109,NULL),(170,109,NULL),(177,69,NULL),(179,69,NULL),(181,109,NULL),(182,109,NULL),(183,109,NULL),(184,109,NULL),(9,23,NULL),(188,23,NULL),(189,23,NULL);
 /*!40000 ALTER TABLE `weapon` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -562,4 +556,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-04-12  3:16:50
+-- Dump completed on 2023-04-14 13:27:09
