@@ -408,7 +408,7 @@ export const login = (req,res) => {
     const passCheck = "SELECT * FROM user WHERE user.Username = ? AND user.Password = ?"
     db.query(passCheck, [req.body.Username, req.body.Password], (err,data)=>{
         if(err) return res.json(err)
-        if(data.length == 0) return res.json("Password is incorrect or user does not exist!")
+        if(data.length == 0) return res.status(404).json("Password is incorrect or user does not exist!")
         return res.json("User authenticated!")
     })
 }
