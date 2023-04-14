@@ -46,11 +46,13 @@ router.get("/getPlayerName/:id", getPlayerName)
 router.get("/getPlayerInfo/:id", getPlayerInfo)
 router.get("/getAllVendors/", getAllVendors)
 router.get("/getPlayerLogin/:id", getPlayerLogin)
-router.get("/canPlayerAffordThis", canPlayerAffordThis)
-router.get("/canPlayerCarryThis", canPlayerCarryThis)
-router.get("/checkInvenCapacity", checkInvenCapacity)
-router.get("/canPlayerEquip", canPlayerEquip)
-router.get("/canPlayerWield", canPlayerWield)
+
+// Checker functions
+router.put("/canPlayerAffordThis", canPlayerAffordThis)
+router.put("/canPlayerCarryThis", canPlayerCarryThis)
+router.put("/checkInvenCapacity", checkInvenCapacity)
+router.put("/canPlayerEquip", canPlayerEquip)
+router.put("/canPlayerWield", canPlayerWield)
 
 router.put("/isConsumable", isConsumable)
 router.put("/isArmour", isArmour)
