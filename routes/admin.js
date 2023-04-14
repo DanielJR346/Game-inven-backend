@@ -32,8 +32,9 @@ router.get("/getAdminInfo/:id", getAdminInfo)
 router.get("/getAdminLogin/:id", getAdminLogin)
 router.get("/allItems/", allItems)
 router.get("/getVendorOffers", getVendorOffers)
-router.get("/isPlayerValid", isPlayerValid)
-router.get("/isVendorValid", isVendorValid)
+
+router.put("/isPlayerValid", isPlayerValid)
+router.put("/isVendorValid", isVendorValid)
 
 router.put("/removeOffer", removeOffer)
 router.put("/removePlayerItem", removePlayerItem)
