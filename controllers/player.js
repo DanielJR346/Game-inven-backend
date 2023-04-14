@@ -433,7 +433,15 @@ export const buyItem = (req,res) => {
         if(err) return res.json(err)
         console.log("transaction recorded in player_buys_item")
         // return res.json(data)
-        return res.json("Transaction completed")
+        // return res.json("Transaction completed")
+    })
+
+    // Return itemID of new instance item
+    db.query(getItemID, (err,data)=>{
+        if(err) return res.json(err)
+        console.log("got ItemID of instanced item!")
+        return res.json(data)
+        // return res.json("Transaction completed")
     })
 
     // IMPORTANT: Now create the matching item type (ex. armour, weapons, melee weapons, etc.) to complete the fully created instance of the purchased item!
