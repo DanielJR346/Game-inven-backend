@@ -41,6 +41,19 @@ export const getEquippedItems = (req,res) => {
 }
 
 /*
+Get the weapon a player is wielding if they are wielding a weapon
+*/
+export const getWieldedWeapon = (req,res) => {
+    const getWeapon = "SELECT * FROM db.weapon w WHERE w.PlayerWieldID = ?"
+    db.query(getWeapon,[req.params.id],(err,data)=> {
+        if(err) return res.json(err)
+        return res.json(data)
+    })
+
+}
+
+
+/*
 Get all consumables in a players inventory
 */
 export const getConsumables = (req,res) => {
@@ -79,10 +92,10 @@ export const getPlayerInfo = (req,res) => {
 
 /*
  Get all available vendors
- */ 
+*/ 
 export const getAllVendors = (req, res) => {
-    const q = "SELECT * FROM db.vendor"
-    db.query(q, req, (err, data) => {
+    const q = "SELECT * FROM db.vendor" 
+    db.query(q, (err, data) => {
         if (err) return res.json(err)
         return res.json(data)
     })
@@ -106,7 +119,6 @@ export const getPlayerLogin = (req, res) => {
 
 /*
 Player wants to equip a piece of armor
-NOTE: NOT FINISHED!!!! doesnt check if player is already equipping an armor piece of that type
 */
 export const equipArmour = (req,res) => {
     const PlayerID = req.params.id;
@@ -118,6 +130,55 @@ export const equipArmour = (req,res) => {
         if(err) return res.json(err)
         console.log("Armor Equipped!")
         return res.json("Armor Equipped!")
+    })
+}
+
+/*
+Player unequips a piece of armour
+INPUT:
+    req.params:
+        UserID
+    req.body:
+        ItemID
+*/
+export const unequipArmour = (req,res) => {
+    const unequip = "UPDATE db.armour SET `EquippedID` = NULL WHERE `ItemID` = ? AND `EquippedID` = ?"
+    db.query(unequip, [req.body.ItemID, req.params.id], (err,data)=>{
+        if(err) return res.json(err)
+        console.log("Armour unequipped")
+        return res.json("Armour unequipped")
+    })
+}
+
+/*
+Player wields a weapon
+INPUT:
+    req.body:
+        ItemID
+        UserID
+*/
+export const wieldWeapon = (req,res) => {
+    const wieldWeapon = "UPDATE db.weapon SET `PlayerWieldID` = ? WHERE `ItemID` = ?"
+    db.query(wieldWeapon, [req.body.UserID, req.body.ItemID], (err,data)=>{
+        if(err) return res.json(err)
+        console.log("weapon wielded!")
+        return res.json("weapon wielded!")
+    })
+}
+
+/*
+Player unwields a weapon
+INPUT:
+    req.body:
+        ItemID
+        UserID
+*/
+export const unwieldWeapon = (req,res) =>{
+    const unwieldWeapon = "UPDATE db.weapon SET `PlayerWieldID` = NULL WHERE `ItemID` = ? AND `PlayerWieldID` = ?"
+    db.query(unwieldWeapon, [req.body.ItemID, req.body.UserID], (err,data)=>{
+        if(err) return res.json(err)
+        console.log("weapon unwielded!")
+        return res.json("weapon unwielded!")
     })
 }
 
@@ -384,7 +445,15 @@ export const buyItem = (req,res) => {
         if(err) return res.json(err)
         console.log("transaction recorded in player_buys_item")
         // return res.json(data)
-        return res.json("Transaction completed")
+        // return res.json("Transaction completed")
+    })
+
+    // Return itemID of new instance item
+    db.query(getItemID, (err,data)=>{
+        if(err) return res.json(err)
+        console.log("got ItemID of instanced item!")
+        return res.json(data)
+        // return res.json("Transaction completed")
     })
 
     // IMPORTANT: Now create the matching item type (ex. armour, weapons, melee weapons, etc.) to complete the fully created instance of the purchased item!
@@ -397,6 +466,7 @@ export const buyItem = (req,res) => {
 Inputs for all instance functions:
      req.body:
          ItemID
+         NewItemID
          PlayerID
 */
 
@@ -404,25 +474,20 @@ Inputs for all instance functions:
 Create an instance of armour
 */
 export const instanceArmour = (req,res) => {
-    // Get info of equippable and armour to make instance
-    const getItemInfo = "SELECT @Defense,@Type,@Weight, @Defense := a.Defense, @Type := a.Type, @Weight := e.Weight FROM db.armour a, db.equippable e WHERE a.ItemID = ? AND e.ItemID = ?"
-    db.query(getItemInfo, [req.body.ItemID, req.body.ItemID, req.body.ItemID], (err,data)=>{
-        if(err) return res.json(err)
-        console.log("Got item info")
-        // return res.json(data)
-    })
 
     // Create the instance of an equippable
-    const instanceEquippable = "INSERT INTO equippable (`ItemID`, `Weight`) VALUES (@newItemID, @Weight)"
-    db.query(instanceEquippable, (err,data)=>{
+    // const instanceEquippable = "INSERT INTO equippable (`ItemID`, `Weight`) VALUES (@newItemID, @Weight)"
+    const instanceEquippable = "INSERT INTO equippable (`ItemID`, `Weight`) SELECT ?, e.Weight FROM db.equippable e WHERE e.ItemID = ?"
+    db.query(instanceEquippable, [req.body.NewItemID, req.body.ItemID], (err,data)=>{
         if(err) return res.json(err)
         console.log("equippable created!")
         // return res.json(data)
     })
 
     // Create the instance of the armour
-    const instanceArmour = "INSERT INTO armour (`ItemID`, `Defense`, `Type`, `EquippedID`) VALUES (@newItemID, @Defense, @Type, NULL)"
-    db.query(instanceArmour, (err,data)=>{
+    // const instanceArmour = "INSERT INTO armour (`ItemID`, `Defense`, `Type`, `EquippedID`) VALUES (@newItemID, @Defense, @Type, NULL)"
+    const instanceArmour = "INSERT INTO armour (`ItemID`, `Defense`, `Type`, `EquippedID`) SELECT ?, a.Defense, a.Type, NULL FROM db.armour a WHERE a.ItemID = ?"
+    db.query(instanceArmour,[req.body.NewItemID, req.body.ItemID], (err,data)=>{
         if(err) return res.json(err)
         console.log("armour created!")
         return res.json("instance of armour created!")
@@ -434,36 +499,32 @@ export const instanceArmour = (req,res) => {
 Create an instance of MELEE weapon
 */
 export const instanceMeleeWeapon = (req,res) => {
-    // Get info on weapon and melee_weapon to create instance
-    const getItemInfo = "SELECT @AttackPower, @Weight, @AttackSpeed, @AttackPower := w.AttackPower, @Weight := e.Weight, @AttackSpeed := m.AttackSpeed FROM db.weapon w, db.melee_weapon m, db.equippable e WHERE m.WeaponID = ? AND w.ItemID = ? AND e.ItemID = ?"
-    db.query(getItemInfo, [req.body.ItemID,req.body.ItemID,req.body.ItemID], (err,data)=>{
-        if(err) return res.json(err)
-        console.log("Got item info")
-        // return res.json(data)
-    })
 
     // Create the instance of an equippable
-    const instanceEquippable = "INSERT INTO equippable (`ItemID`, `Weight`) VALUES (@newItemID, @Weight)"
-    db.query(instanceEquippable, (err,data)=>{
+    // const instanceEquippable = "INSERT INTO equippable (`ItemID`, `Weight`) VALUES (@newItemID, @Weight)"
+    const instanceEquippable = "INSERT INTO equippable (`ItemID`, `Weight`) SELECT ?, e.Weight FROM db.equippable e WHERE e.ItemID = ?"
+    db.query(instanceEquippable, [req.body.NewItemID, req.body.ItemID], (err,data)=>{
         if(err) return res.json(err)
         console.log("equippable created!")
         // return res.json(data)
     })
 
     // Create instance of weapon
-    const instanceWeapon = "INSERT INTO weapon (`ItemID`, `AttackPower`, `PlayerWieldID`) VALUES (@newItemID, @AttackPower, NULL)"
-    db.query(instanceWeapon, (err,data)=>{
+    // const instanceWeapon = "INSERT INTO weapon (`ItemID`, `AttackPower`, `PlayerWieldID`) VALUES (@newItemID, @AttackPower, NULL)"
+    const instanceWeapon = "INSERT INTO weapon (`ItemID`, `AttackPower`, `PlayerWieldID`) SELECT ?, w.AttackPower, NULL FROM db.weapon w WHERE w.ItemID = ?"
+    db.query(instanceWeapon, [req.body.NewItemID, req.body.ItemID], (err,data)=>{
         if(err) return res.json(err)
         console.log("created weapon instance")
         // return res.json(data)
     })
 
     // Create instance of melee weapon
-    const instanceMeleeWeapon = "INSERT INTO melee_weapon (`WeaponID`, `AttackSpeed`) VALUES (@newItemID, @AttackSpeed)"
-    db.query(instanceMeleeWeapon, (err,data)=>{
+    // const instanceMeleeWeapon = "INSERT INTO melee_weapon (`WeaponID`, `AttackSpeed`) VALUES (@newItemID, @AttackSpeed)"
+    const instanceMeleeWeapon = "INSERT INTO melee_weapon (`WeaponID`, `AttackSpeed`) SELECT ?, m.AttackSpeed FROM db.melee_weapon m WHERE m.WeaponID = ?"
+    db.query(instanceMeleeWeapon, [req.body.NewItemID, req.body.ItemID], (err,data)=>{
         if(err) return res.json(err)
         console.log("created melee_weapon instance")
-        return res.json(data)
+        return res.json("Melee weapon created!")
     })
 }
 
@@ -471,36 +532,32 @@ export const instanceMeleeWeapon = (req,res) => {
 Create an instance of RANGED weapon
 */
 export const instanceRangedWeapon = (req,res) => {
-    // Get info on weapon and melee_weapon to create instance
-    const getItemInfo = "SELECT @AttackPower, @Weight, @DrawSpeed, @AttackPower := w.AttackPower, @Weight := e.Weight, @DrawSpeed := r.DrawSpeed FROM db.weapon w, db.ranged_weapon r, db.equippable e WHERE r.WeaponID = ? AND w.ItemID = ? AND e.ItemID = ?"
-    db.query(getItemInfo, [req.body.ItemID,req.body.ItemID,req.body.ItemID], (err,data)=>{
-        if(err) return res.json(err)
-        console.log("Got item info")
-        // return res.json(data)
-    })
 
     // Create the instance of an equippable
-    const instanceEquippable = "INSERT INTO equippable (`ItemID`, `Weight`) VALUES (@newItemID, @Weight)"
-    db.query(instanceEquippable, (err,data)=>{
+    // const instanceEquippable = "INSERT INTO equippable (`ItemID`, `Weight`) VALUES (@newItemID, @Weight)"
+    const instanceEquippable = "INSERT INTO equippable (`ItemID`, `Weight`) SELECT ?, e.Weight FROM db.equippable e WHERE e.ItemID = ?"
+    db.query(instanceEquippable, [req.body.NewItemID, req.body.ItemID], (err,data)=>{
         if(err) return res.json(err)
         console.log("equippable created!")
         // return res.json(data)
     })
 
     // Create instance of weapon
-    const instanceWeapon = "INSERT INTO weapon (`ItemID`, `AttackPower`, `PlayerWieldID`) VALUES (@newItemID, @AttackPower, NULL)"
-    db.query(instanceWeapon, (err,data)=>{
+    // const instanceWeapon = "INSERT INTO weapon (`ItemID`, `AttackPower`, `PlayerWieldID`) VALUES (@newItemID, @AttackPower, NULL)"
+    const instanceWeapon = "INSERT INTO weapon (`ItemID`, `AttackPower`, `PlayerWieldID`) SELECT ?, w.AttackPower, NULL FROM db.weapon w WHERE w.ItemID = ?"
+    db.query(instanceWeapon, [req.body.NewItemID, req.body.ItemID], (err,data)=>{
         if(err) return res.json(err)
         console.log("created weapon instance")
         // return res.json(data)
     })
 
     // Create instance of ranged weapon
-    const instanceMeleeWeapon = "INSERT INTO ranged_weapon (`WeaponID`, `DrawSpeed`) VALUES (@newItemID, @DrawSpeed)"
-    db.query(instanceMeleeWeapon, (err,data)=>{
+    // const instanceMeleeWeapon = "INSERT INTO ranged_weapon (`WeaponID`, `DrawSpeed`) VALUES (@newItemID, @DrawSpeed)"
+    const instanceRangedWeapon = "INSERT INTO ranged_weapon (`WeaponID`, `DrawSpeed`) SELECT ?, r.DrawSpeed FROM db.ranged_weapon r WHERE r.WeaponID = ?"
+    db.query(instanceRangedWeapon, [req.body.NewItemID, req.body.ItemID], (err,data)=>{
         if(err) return res.json(err)
         console.log("created ranged_weapon instance")
-        return res.json(data)
+        return res.json("ranged weapon created!")
     })
 }
 
@@ -508,36 +565,32 @@ export const instanceRangedWeapon = (req,res) => {
 Create an instance of Magic weapon
 */
 export const instanceMagicWeapon = (req,res) => {
-    // Get info on weapon and melee_weapon to create instance
-    const getItemInfo = "SELECT @AttackPower, @Weight, @ManaCost, @AttackPower := w.AttackPower, @Weight := e.Weight, @ManaCost := r.ManaCost FROM db.weapon w, db.magic_weapon r, db.equippable e WHERE r.WeaponID = ? AND w.ItemID = ? AND e.ItemID = ?"
-    db.query(getItemInfo, [req.body.ItemID,req.body.ItemID,req.body.ItemID], (err,data)=>{
-        if(err) return res.json(err)
-        console.log("Got item info")
-        // return res.json(data)
-    })
 
     // Create the instance of an equippable
-    const instanceEquippable = "INSERT INTO equippable (`ItemID`, `Weight`) VALUES (@newItemID, @Weight)"
-    db.query(instanceEquippable, (err,data)=>{
+    // const instanceEquippable = "INSERT INTO equippable (`ItemID`, `Weight`) VALUES (@newItemID, @Weight)"
+    const instanceEquippable = "INSERT INTO equippable (`ItemID`, `Weight`) SELECT ?, e.Weight FROM db.equippable e WHERE e.ItemID = ?"
+    db.query(instanceEquippable, [req.body.NewItemID, req.body.ItemID], (err,data)=>{
         if(err) return res.json(err)
         console.log("equippable created!")
         // return res.json(data)
     })
 
     // Create instance of weapon
-    const instanceWeapon = "INSERT INTO weapon (`ItemID`, `AttackPower`, `PlayerWieldID`) VALUES (@newItemID, @AttackPower, NULL)"
-    db.query(instanceWeapon, (err,data)=>{
+    // const instanceWeapon = "INSERT INTO weapon (`ItemID`, `AttackPower`, `PlayerWieldID`) VALUES (@newItemID, @AttackPower, NULL)"
+    const instanceWeapon = "INSERT INTO weapon (`ItemID`, `AttackPower`, `PlayerWieldID`) SELECT ?, w.AttackPower, NULL FROM db.weapon w WHERE w.ItemID = ?"
+    db.query(instanceWeapon, [req.body.NewItemID, req.body.ItemID], (err,data)=>{
         if(err) return res.json(err)
         console.log("created weapon instance")
         // return res.json(data)
     })
 
     // Create instance of ranged weapon
-    const instanceMeleeWeapon = "INSERT INTO magic_weapon (`WeaponID`, `ManaCost`) VALUES (@newItemID, @ManaCost)"
-    db.query(instanceMeleeWeapon, (err,data)=>{
+    // const instanceMeleeWeapon = "INSERT INTO ranged_weapon (`WeaponID`, `DrawSpeed`) VALUES (@newItemID, @DrawSpeed)"
+    const instanceMagicWeapon = "INSERT INTO magic_weapon (`WeaponID`, `ManaCost`) SELECT ?, r.ManaCost FROM db.magic_weapon r WHERE r.WeaponID = ?"
+    db.query(instanceMagicWeapon, [req.body.NewItemID, req.body.ItemID], (err,data)=>{
         if(err) return res.json(err)
         console.log("created magic_weapon instance")
-        return res.json(data)
+        return res.json("magic weapon created!")
     })
 }
 
@@ -545,21 +598,15 @@ export const instanceMagicWeapon = (req,res) => {
 Create instance of consumable
 */
 export const instanceConsumable = (req,res) => {
-    
-    // Get consumable info
-    const getItemInfo = "SELECT @Effect, @Quantity, @Uses, @Effect := c.Effect, @Quantity := c.Quantity, @Uses := c.Uses FROM db.consumable c WHERE c.ItemID = ?"
-    db.query(getItemInfo, [req.body.ItemID], (err,data)=>{
-        if(err) return res.json(err)
-        console.log("Got item info")
-        // return res.json(data)
-    })
 
     // Create instance of consumable
-    const instanceConsumable = "INSERT INTO consumable (`ItemID`, `Effect`, `Quantity`, `Uses`, `CurrentUsesLeft`) VALUES (@newItemID, @Effect, @Quantity, @Uses, @Uses)"
-    db.query(instanceConsumable, (err,data)=>{
+    // const instanceConsumable = "INSERT INTO consumable (`ItemID`, `Effect`, `Quantity`, `Uses`, `CurrentUsesLeft`) VALUES (@newItemID, @Effect, @Quantity, @Uses, @Uses)"
+    const instanceConsumable = "INSERT INTO consumable (`ItemID`, `Effect`, `Quantity`, `Uses`, `CurrentUsesLeft`) " +
+                                "SELECT ?, c.Effect, c.Quantity, c.Uses, c.Uses FROM db.consumable c WHERE c.ItemID = ?"
+    db.query(instanceConsumable, [req.body.NewItemID, req.body.ItemID], (err,data)=>{
         if(err) return res.json(err)
-        console.log("created magic_weapon instance")
-        return res.json(data)
+        console.log("created consumable instance")
+        return res.json("consumable created!")
     })
 
 }
@@ -707,11 +754,101 @@ export const loginAuthorizedP = (req,res) => {
     })
 }
 export const loginAuthorizedA = (req,res) => {
-    // Get ID of player
+    // Get ID of admin
     const admin = "SELECT a.AdminID FROM db.user u, db.admin a WHERE u.UserID = a.UserID AND u.Username = ? AND u.Password = ?"
     db.query(admin, [req.body.Username, req.body.Password], (err,data)=>{
         if(err) return res.json(err)
         // if(data.length == 0) return res.status(404).json("Password is incorrect or user does not exist!")
         return res.json(data)
+    })
+}
+
+/*
+Checks if a player can equip a piece of armor (checks if they are already wearing something of that armour type)
+INPUT:
+    req.body:
+        ItemID
+        UserID
+*/
+export const canPlayerEquip = (req,res) => {
+    // Get armour of item they want to equip
+    const getType = "SELECT @type, @type := a.Type FROM db.armour a WHERE a.ItemID = ?"
+    db.query(getType, [req.body.ItemID], (err,data)=>{
+        if(err) return res.json(err)
+        console.log(data)
+        // return res.json(data)
+    })
+
+    // Check if the player is already wearing an armour piece of that type
+    const armourCheck = "SELECT * FROM db.armour a WHERE a.EquippedID = ? AND a.Type = @type"
+    db.query(armourCheck, [req.body.UserID], (err,data)=>{
+        if(err) return res.json(err)
+        if (data.length == 0) return res.json("Player is not wearing this armour type!")
+        else return res.json("Player is already wearing that armour type!")
+        // return res.json(data)
+    })
+}
+
+/*
+Checks if a player is already wielding a weapon (prevents wielding multiple weapons)
+INPUT:
+    req.body:
+        UserID
+*/
+export const canPlayerWield = (req,res) => {
+    // Check if player is already wielding a weapon
+    const weaponCheck = "SELECT * FROM db.weapon w WHERE w.PlayerWieldID = ?"
+    db.query(weaponCheck, [req.body.UserID], (err,data)=>{
+        if(err) return res.json(err)
+        if (data.length == 0) return res.json("Player is not wielding a weapon")
+        else return res.json("Player is already wielding a weapon")
+    })
+
+}
+
+/*
+Functions that check if an item is a weapon, armour, or consumable
+INPUT:
+    req.body:
+        ItemID
+*/
+export const isConsumable = (req,res) => {
+    const check = "SELECT * FROM db.consumable x WHERE x.ItemID = ?"
+    db.query(check, [req.body.ItemID], (err,data)=> {
+        if (err) return res.json(err)
+        if (data.length == 0) return res.json("not consumable")
+        else return res.json(data)
+    })
+}
+export const isArmour = (req,res) => {
+    const check = "SELECT * FROM db.armour x WHERE x.ItemID = ?"
+    db.query(check, [req.body.ItemID], (err,data)=> {
+        if (err) return res.json(err)
+        if (data.length == 0) return res.json("not armour")
+        else return res.json(data)
+    })
+}
+export const isMelee = (req,res) => {
+    const check = "SELECT * FROM db.melee_weapon x WHERE x.WeaponID = ?"
+    db.query(check, [req.body.ItemID], (err,data)=> {
+        if (err) return res.json(err)
+        if (data.length == 0) return res.json("not melee weapon")
+        else return res.json(data)
+    })
+}
+export const isRanged = (req, res) => {
+    const check = "SELECT * FROM db.ranged_weapon x WHERE x.WeaponID = ?"
+    db.query(check, [req.body.ItemID], (err, data) => {
+        if (err) return res.json(err)
+        if (data.length == 0) return res.json("not ranged weapon")
+        else return res.json(data)
+    })
+}
+export const isMagic = (req, res) => {
+    const check = "SELECT * FROM db.magic_weapon x WHERE x.WeaponID = ?"
+    db.query(check, [req.body.ItemID], (err, data) => {
+        if (err) return res.json(err)
+        if (data.length == 0) return res.json("not magic weapon")
+        else return res.json(data)
     })
 }
