@@ -41,6 +41,19 @@ export const getEquippedItems = (req,res) => {
 }
 
 /*
+Get the weapon a player is wielding if they are wielding a weapon
+*/
+export const getWieldedWeapon = (req,res) => {
+    const getWeapon = "SELECT * FROM db.weapon w WHERE w.PlayerWieldID = ?"
+    db.query(getWeapon,[req.params.id],(err,data)=> {
+        if(err) return res.json(err)
+        return res.json(data)
+    })
+
+}
+
+
+/*
 Get all consumables in a players inventory
 */
 export const getConsumables = (req,res) => {
@@ -136,7 +149,6 @@ export const unequipArmour = (req,res) => {
         return res.json("Armour unequipped")
     })
 }
-
 
 /*
 Player wields a weapon

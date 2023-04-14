@@ -3,6 +3,7 @@ import {
     allItems,
     getEquippables,
     getEquippedItems,
+    getWieldedWeapon,
     getConsumables,
     getPlayerName,
     getPlayerInfo,
@@ -41,6 +42,7 @@ const router = express.Router()
 router.get("/allItems/:id", allItems)
 router.get("/getEquippables/:id", getEquippables)
 router.get("/getEquippedItems/:id", getEquippedItems)
+router.get("/getWieldedWeapon/:id", getWieldedWeapon)
 router.get("/getConsumables/:id", getConsumables)
 router.get("/getPlayerName/:id", getPlayerName)
 router.get("/getPlayerInfo/:id", getPlayerInfo)
