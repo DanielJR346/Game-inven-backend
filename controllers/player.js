@@ -454,6 +454,7 @@ export const buyItem = (req,res) => {
 Inputs for all instance functions:
      req.body:
          ItemID
+         NewItemID
          PlayerID
 */
 
@@ -461,25 +462,29 @@ Inputs for all instance functions:
 Create an instance of armour
 */
 export const instanceArmour = (req,res) => {
-    // Get info of equippable and armour to make instance
-    const getItemInfo = "SELECT @Defense,@Type,@Weight, @Defense := a.Defense, @Type := a.Type, @Weight := e.Weight FROM db.armour a, db.equippable e WHERE a.ItemID = ? AND e.ItemID = ?"
-    db.query(getItemInfo, [req.body.ItemID, req.body.ItemID, req.body.ItemID], (err,data)=>{
-        if(err) return res.json(err)
-        console.log("Got item info")
-        // return res.json(data)
-    })
+    // // Get info of equippable and armour to make instance
+    // const getItemInfo = "SELECT @Defense,@Type,@Weight, @Defense := a.Defense, @Type := a.Type, @Weight := e.Weight FROM db.armour a, db.equippable e WHERE a.ItemID = ? AND e.ItemID = ?"
+    // db.query(getItemInfo, [req.body.ItemID, req.body.ItemID, req.body.ItemID], (err,data)=>{
+    //     if(err) return res.json(err)
+    //     console.log("Got item info")
+    //     // return res.json(data)
+    // })
+
+    // INSERT INTO db.armour (`ItemID`, `Defense`, `Type`, `EquippedID`) SELECT 211, a.Defense, a.Type, NULL FROM db.armour a WHERE a.ItemID = 1 LIMIT 1;
 
     // Create the instance of an equippable
-    const instanceEquippable = "INSERT INTO equippable (`ItemID`, `Weight`) VALUES (@newItemID, @Weight)"
-    db.query(instanceEquippable, (err,data)=>{
+    // const instanceEquippable = "INSERT INTO equippable (`ItemID`, `Weight`) VALUES (@newItemID, @Weight)"
+    const instanceEquippable = "INSERT INTO equippable (`ItemID`, `Weight`) SELECT ?, e.Weight FROM db.equippable e WHERE e.ItemID = ?"
+    db.query(instanceEquippable, [req.body.NewItemID, req.body.ItemID], (err,data)=>{
         if(err) return res.json(err)
         console.log("equippable created!")
         // return res.json(data)
     })
 
     // Create the instance of the armour
-    const instanceArmour = "INSERT INTO armour (`ItemID`, `Defense`, `Type`, `EquippedID`) VALUES (@newItemID, @Defense, @Type, NULL)"
-    db.query(instanceArmour, (err,data)=>{
+    // const instanceArmour = "INSERT INTO armour (`ItemID`, `Defense`, `Type`, `EquippedID`) VALUES (@newItemID, @Defense, @Type, NULL)"
+    const instanceArmour = "INSERT INTO armour (`ItemID`, `Defense`, `Type`, `EquippedID`) SELECT ?, a.Defense, a.Type, NULL FROM db.armour a WHERE a.ItemID = ?"
+    db.query(instanceArmour,[req.body.NewItemID, req.body.ItemID], (err,data)=>{
         if(err) return res.json(err)
         console.log("armour created!")
         return res.json("instance of armour created!")
