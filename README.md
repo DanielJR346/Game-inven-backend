@@ -1,6 +1,6 @@
 # Game-inven-backend
 Backend for W2023 457 group project
-Import the database file db.sql into mySQL workbench, then create a connection with the root user.
+Import the database file currentBD471.sql into mySQL workbench, then create a connection with the root user.
 Alter the "password" field to match your own root user password in the db.js file
 
 To start the backend, enter these commands into your command prompt:
